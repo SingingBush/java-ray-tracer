@@ -336,8 +336,8 @@ public class RayTracer {
 	void openFile(String filename)
 	{
 		try {
-			workingDirectory = new File(filename).getParent() + "\\";
-			Reader fr = new FileReader(filename);
+			workingDirectory = new File(filename).getParent() + File.separator;
+			final Reader fr = new FileReader(filename);
 			m_sceneText.setText(readTextFile(fr));
 		} catch (final FileNotFoundException e) {
 			LOG.error("file not found", e);
