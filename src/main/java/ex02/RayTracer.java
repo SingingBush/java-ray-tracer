@@ -1,6 +1,8 @@
 package ex02;
 
 import java.io.*;
+import java.util.Arrays;
+
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -16,8 +18,13 @@ import ex02.entities.Surface;
 import ex02.entities.lights.Light;
 import ex02.entities.primitives.Primitive;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public class RayTracer {		
+public class RayTracer {
+
+	private static final Logger LOG = LogManager.getLogger(RayTracer.class);
+
 	public final double EPSILON = 0.00000001F;
 	public final int MAX_REFLECTION_RECURSION_DEPTH = 8;
 	
@@ -48,6 +55,8 @@ public class RayTracer {
 	
 	public static void main(String[] args) 
 	{
+		LOG.debug("Ray Tracer started with args: {}", Arrays.toString(args));
+
 		display = new Display();
 		shell = new Shell(display);
 		RayTracer tracer = new RayTracer();
@@ -330,9 +339,8 @@ public class RayTracer {
 			workingDirectory = new File(filename).getParent() + "\\";
 			Reader fr = new FileReader(filename);
 			m_sceneText.setText(readTextFile(fr));
-			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		} catch (final FileNotFoundException e) {
+			LOG.error("file not found", e);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
