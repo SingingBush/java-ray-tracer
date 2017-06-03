@@ -1,9 +1,14 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 apply plugin: 'application'
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 version = '1.0'
 
 mainClassName = "ex02.RayTracer"
+if (Os.isFamily(Os.FAMILY_MAC)) {
+    applicationDefaultJvmArgs = ["-XstartOnFirstThread"] // required on OSX
+}
 
 repositories {
     mavenCentral()
@@ -12,11 +17,11 @@ repositories {
 String os = System.getProperty('os.name').toLowerCase().split()[0]
 String arch = System.getProperty('os.arch')
 
-println "Need to build with native swt-4.5 lib for " + os + '-' + arch
+println "Need to build with native swt-4.5 lib for $os-$arch"
 
 dependencies {
 //    compile fileTree(dir: 'libs', include: '*.jar')
-    compile files('src/main/lib/swt-4.5-'+os+'-'+arch+'.jar')
+    compile files("src/main/lib/swt-4.5-${os}-${arch}.jar")
 
     compile 'gov.nist.math:jama:1.0.3'
 

@@ -14,3 +14,5 @@ To build and run the project simply run the Gradle wrapper in the projects root 
 ```
 
 ![alt text](test-render.png "Running under Windows")
+
+On Mac will need `-XstartOnFirstThread`
