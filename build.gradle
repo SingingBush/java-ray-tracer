@@ -17,11 +17,11 @@ repositories {
 String os = System.getProperty('os.name').toLowerCase().split()[0]
 String arch = System.getProperty('os.arch')
 
-println "Need to build with native swt-4.5 lib for $os-$arch"
+println "Need to build with native swt lib for ${os}-${arch}"
 
 dependencies {
 //    compile fileTree(dir: 'libs', include: '*.jar')
-    compile files("src/main/lib/swt-4.5-${os}-${arch}.jar")
+    compile files("src/main/lib/swt-4.6.3-${os}.jar")
 
     compile 'gov.nist.math:jama:1.0.3'
     compile 'org.apache.logging.log4j:log4j-api:2.8.2'
