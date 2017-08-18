@@ -1,6 +1,15 @@
+*.DS_Store
+
+# Compiled class file
+*.class
+
+# Intellij
 .idea/
+*.iml
+
+# build output
 .gradle/
 target/
 build/
+out/
 
-*.iml

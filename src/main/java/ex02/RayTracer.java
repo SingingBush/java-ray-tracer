@@ -3,6 +3,8 @@ package ex02;
 import java.io.*;
 import java.util.Arrays;
 
+import ex02.parser.ParserException;
+import ex02.parser.SceneParser;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -89,7 +91,7 @@ public class RayTracer {
         }
     }
 
-    public Ray constructRayThroughPixel(int x, int y, double sampleXOffset, double sampleYOffset) throws Exception {
+    private Ray constructRayThroughPixel(int x, int y, double sampleXOffset, double sampleYOffset) throws Exception {
         Ray ray = new Ray(eye, direction, screenDist);
         double[] endPoint = ray.getEndPoint();
 
@@ -234,12 +236,13 @@ public class RayTracer {
         return color;
     }
 
+    // todo: break renderer out into another class and have RenderException
     private void renderTo(ImageData dat, Canvas canvas) throws Exception {
-        final Parser parser = new Parser();
+        final SceneParser parser = new SceneParser(new StringReader(m_sceneText.getText()));
 
         try {
-            scene = parser.parse(new StringReader(m_sceneText.getText()));
-        } catch (final Exception e) {
+            scene = parser.parse();
+        } catch (final ParserException e) {
             LOG.error("Parser encountered an error", e);
             final MessageBox msgBox = new MessageBox(shell);
             msgBox.setText("Error");
@@ -343,9 +346,8 @@ public class RayTracer {
     private void runMain(final Display display) {
         Shell editShell = new Shell(display);
         editShell.setText("Input");
-        editShell.setSize(300, 550);
-        GridLayout gridEdit = new GridLayout();
-        editShell.setLayout(gridEdit);
+        editShell.setSize(600, 600);
+        editShell.setLayout(new GridLayout());
 
         Composite editComp = new Composite(editShell, SWT.NONE);
         GridData ld = new GridData();
@@ -355,29 +357,26 @@ public class RayTracer {
         m_sceneText = new Text(editShell, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
         ld = new GridData(GridData.FILL_BOTH);
         m_sceneText.setLayoutData(ld);
-        Font fixed = new Font(display, "Courier New", 10, 0);
-        m_sceneText.setFont(fixed);
+        m_sceneText.setFont(new Font(display, "Courier New", 11, 0));
 
 
-        final Shell shell = new Shell(display);
-        shell.setText("Ray Tracer Ex");
-        shell.setSize(600, 500);
-        GridLayout gridLayout = new GridLayout();
-
-        shell.setLayout(gridLayout);
+        final Shell previewWindow = new Shell(display);
+        previewWindow.setText("Ray Tracer Ex");
+        previewWindow.setSize(1024, 720);
+        previewWindow.setLayout(new GridLayout());
 
         // the canvas we'll be drawing on.
-        final Canvas canvas = new Canvas(shell, SWT.BORDER | SWT.NO_REDRAW_RESIZE);
+        final Canvas canvas = new Canvas(previewWindow, SWT.BORDER | SWT.NO_REDRAW_RESIZE);
         ld = new GridData(GridData.FILL_BOTH);
         canvas.setLayoutData(ld);
 
-        Composite comp = new Composite(shell, SWT.NONE);
+        final Composite comp = new Composite(previewWindow, SWT.NONE);
         ld = new GridData();
         ld.heightHint = 45;
         comp.setLayoutData(ld);
 
         // "Render Button"
-        Button renderBot = new Button(comp, SWT.PUSH);
+        final Button renderBot = new Button(comp, SWT.PUSH);
         renderBot.setText("Render");
         renderBot.setSize(150, 40);
 
@@ -388,45 +387,42 @@ public class RayTracer {
                 try {
                     m_imgdat = new ImageData(m_rect.width, m_rect.height, 24, new PaletteData(0xFF0000, 0xFF00, 0xFF));
                     renderTo(m_imgdat, canvas);
-                }
-//                catch (Parser.ParseException e) {
-//                    System.out.println("Error Parsing text: " + e.getMessage());
-//                }
-                catch (Exception e) {
-                    System.out.println("Error Rendering scene: " + e.getMessage());
-                    e.printStackTrace();
+                } catch (final Exception e) {
+                    LOG.error("Error Rendering scene: " + e.getMessage(), e);
                 }
             }
         });
 
-        Button savePngBot = new Button(comp, SWT.PUSH);
+        final Button savePngBot = new Button(comp, SWT.PUSH);
         savePngBot.setText("Save PNG");
+        //savePngBot.setSize(150, 40);
         savePngBot.setBounds(250, 0, 70, 40);
+
         savePngBot.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent ev) {
-                FileDialog dlg = new FileDialog(shell, SWT.SAVE);
+                FileDialog dlg = new FileDialog(previewWindow, SWT.SAVE);
                 dlg.setText("Save PNG");
                 dlg.setFilterExtensions(new String[]{"*.png", "*.*"});
                 String selected = dlg.open();
                 if (selected == null)
                     return;
 
-                ImageLoader loader = new ImageLoader();
+                final ImageLoader loader = new ImageLoader();
                 loader.data = new ImageData[]{m_imgdat};
                 loader.save(selected, SWT.IMAGE_PNG);
             }
         });
 
 
-        Button openBot = new Button(editComp, SWT.PUSH);
+        final Button openBot = new Button(editComp, SWT.PUSH);
         openBot.setText("Open");
         openBot.setBounds(0, 0, 100, 30);
 
         openBot.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                FileDialog dlg = new FileDialog(shell, SWT.OPEN);
+                FileDialog dlg = new FileDialog(previewWindow, SWT.OPEN);
                 dlg.setText("Open Model");
                 dlg.setFilterExtensions(new String[]{"*.txt", "*.*"});
                 String selected = dlg.open();
@@ -456,12 +452,12 @@ public class RayTracer {
             img.dispose();
         });
 
-        shell.open();
-        Point l = shell.getLocation();
+        previewWindow.open();
+        final Point l = previewWindow.getLocation();
         editShell.setLocation(new Point(l.x + 650, l.y));
         editShell.open();
 
-        while (!shell.isDisposed()) {
+        while (!previewWindow.isDisposed()) {
             if (!display.readAndDispatch()) display.sleep();
         }
 
