@@ -27,27 +27,27 @@ public class Utils {
     }
 
     // Loads a texture into a matrix (3rd dimension values are in [0, 1])
-    public static double[][][] loadTexture(String textureFileName) {
-        ImageLoader imageLoader = new ImageLoader();
-        ImageData[] imageDataArr = imageLoader.load(RayTracer.workingDirectory + textureFileName);
-        ImageData imageData = imageDataArr[0];
-
-        int textureWidth = imageData.width;
-        int textureHeight = imageData.height;
-
-        double[][][] texture = new double[textureHeight][textureWidth][3];
-
-        for (int i = 0; i < textureHeight; i++) {
-            for (int j = 0; j < textureWidth; j++) {
-                int pixel = imageData.getPixel(j, i);
-                RGB rgb = imageData.palette.getRGB(pixel);
-
-                texture[i][j][0] = rgb.red / 255F;
-                texture[i][j][1] = rgb.green / 255F;
-                texture[i][j][2] = rgb.blue / 255F;
-            }
-        }
-
-        return texture;
-    }
+//    public static double[][][] loadTexture(String textureFileName) {
+//        ImageLoader imageLoader = new ImageLoader();
+//        ImageData[] imageDataArr = imageLoader.load(RayTracer.workingDirectory + textureFileName);
+//        ImageData imageData = imageDataArr[0];
+//
+//        int textureWidth = imageData.width;
+//        int textureHeight = imageData.height;
+//
+//        double[][][] texture = new double[textureHeight][textureWidth][3];
+//
+//        for (int i = 0; i < textureHeight; i++) {
+//            for (int j = 0; j < textureWidth; j++) {
+//                int pixel = imageData.getPixel(j, i);
+//                RGB rgb = imageData.palette.getRGB(pixel);
+//
+//                texture[i][j][0] = rgb.red / 255F;
+//                texture[i][j][1] = rgb.green / 255F;
+//                texture[i][j][2] = rgb.blue / 255F;
+//            }
+//        }
+//
+//        return texture;
+//    }
 }

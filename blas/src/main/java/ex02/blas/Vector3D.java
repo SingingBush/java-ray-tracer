@@ -1,5 +1,7 @@
 package ex02.blas;
 
+import java.util.Arrays;
+
 /**
  * Vector class for vectors having a position, direction and magnitude properties
  */
@@ -86,5 +88,15 @@ public class Vector3D {
 
 	public void setMagnitude(double magnitude) {
 		this.magnitude = magnitude;
-	}		
+	}
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Vector3D{");
+        sb.append("position=").append(Arrays.toString(position));
+        sb.append(", direction=").append(Arrays.toString(direction));
+        sb.append(", magnitude=").append(magnitude);
+        sb.append('}');
+        return sb.toString();
+    }
 }

@@ -2,8 +2,6 @@ package ex02.entities.lights;
 
 import java.util.List;
 
-import ex02.Parser;
-import ex02.Parser.ParseException;
 import ex02.blas.MathUtils;
 import ex02.entities.IEntity;
 
@@ -11,19 +9,19 @@ import ex02.entities.IEntity;
 // it replaces itself with a grid of point-lights and ceases to exist.
 public class LightArea extends Light {
 
-	double[] p0, p1, p2;	
-	double[] attenuation = {1, 0, 0};
-	double[] color = {1, 1, 1};
-	int gridWidth = 1;
+	private double[] p0, p1, p2;
+    private double[] attenuation = {1, 0, 0};
+    private double[] color = {1, 1, 1};
+    private int gridWidth = 1;
 
 	@Override
 	public void setParameter(String name, String[] args) throws Exception {
-		if ("p0".equals(name)) p0 = Parser.parseVector(args);	
-		if ("p1".equals(name)) p1 = Parser.parseVector(args);
-		if ("p2".equals(name)) p2 = Parser.parseVector(args);
+		if ("p0".equals(name)) p0 = MathUtils.parseVector(args);
+		if ("p1".equals(name)) p1 = MathUtils.parseVector(args);
+		if ("p2".equals(name)) p2 = MathUtils.parseVector(args);
 		if ("grid-width".equals(name)) gridWidth = Integer.parseInt(args[0]);		
-		if ("attenuation".equals(name)) attenuation = Parser.parseVector(args);
-		if ("color".equals(name)) color = Parser.parseVector(args);		
+		if ("attenuation".equals(name)) attenuation = MathUtils.parseVector(args);
+		if ("color".equals(name)) color = MathUtils.parseVector(args);
 	}
 	
 	// This method will be never called (see class notes).
@@ -33,7 +31,7 @@ public class LightArea extends Light {
 	}
 
 	@Override
-	public void postInit(List<IEntity> entities) throws ParseException {
+	public void postInit(List<IEntity> entities) throws Exception {
 		// Replace the LightArea with a grid of point-light objects.
 		double[] effectiveAttenuation = MathUtils.multiplyScalar(attenuation, MathUtils.sqr(gridWidth));
 		

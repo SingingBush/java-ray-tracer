@@ -1,6 +1,6 @@
 package ex02.entities.lights;
 
-import ex02.Parser;
+import ex02.blas.MathUtils;
 import ex02.entities.IEntity;
 
 public abstract class Light implements IEntity {	
@@ -12,23 +12,15 @@ public abstract class Light implements IEntity {
 	
 	public abstract double[] getVectorToLight(double[] pointOfIntersection) throws Exception;
 	
-	public boolean parseParameter(String name, String[] args) throws Exception {
-		boolean parsed = false;
-				
-		if ("color".equals(name)) { color = Parser.parseVector(args); parsed = true; }		
-		
-		return parsed;		
-	}		
-	
 	public double[] getPosition() {
 		return position;
 	}	
 	
-	public void setPosition(double[] position) {
+	void setPosition(double[] position) {
 		this.position = position;
 	} 		
 	
-	public double[] getColor() {
+	double[] getColor() {
 		return color;
 	}
 	

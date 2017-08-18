@@ -2,7 +2,6 @@ package ex02.entities.primitives;
 
 import java.util.List;
 
-import ex02.Parser;
 import ex02.blas.MathUtils;
 import ex02.blas.Vector3D;
 import ex02.entities.IEntity;
@@ -27,7 +26,7 @@ public class Cylinder extends Primitive {
     /*
      * Note that some calculations are performed in the postInit method for optimization.
      * (non-Javadoc)
-     * @see ex02.entities.primitives.Primitive#getNormal(double[])
+     * @see Primitive#getNormal(double[])
      */
     @Override
     public double[] getNormal(double[] point) throws Exception {
@@ -52,7 +51,7 @@ public class Cylinder extends Primitive {
     /*
      * Note that some calculations are performed in the postInit method for optimization.
      * (non-Javadoc)
-     * @see ex02.entities.primitives.Primitive#intersect(ex02.entities.Ray)
+     * @see Primitive#intersect(Ray)
      */
     @Override
     public double intersect(Ray ray) {
@@ -156,13 +155,13 @@ public class Cylinder extends Primitive {
     @Override
     public void setParameter(String name, String[] args) throws Exception {
         if (surface.parseParameter(name, args)) return;
-        if ("start".equals(name)) start = Parser.parseVector(args);
-        if ("direction".equals(name)) direction = Parser.parseVector(args);
+        if ("start".equals(name)) start = MathUtils.parseVector(args);
+        if ("direction".equals(name)) direction = MathUtils.parseVector(args);
         if ("length".equals(name)) length = Double.parseDouble(args[0]);
         if ("radius".equals(name)) radius = Double.parseDouble(args[0]);
     }
 
-
+    @Override
     public double[] getTextureCoords(double[] point) {
         try {
             double pointStartDiff = MathUtils.norm(MathUtils.calcPointsDiff(point, start));

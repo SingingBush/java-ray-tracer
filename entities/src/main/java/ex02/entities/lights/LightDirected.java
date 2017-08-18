@@ -2,16 +2,14 @@ package ex02.entities.lights;
 
 import java.util.List;
 
-import ex02.Parser;
-import ex02.Parser.ParseException;
 import ex02.blas.MathUtils;
 import ex02.entities.IEntity;
 
 public class LightDirected extends Light {
 
-	public double[] position;
-	public double[] direction;		
-	public double[] oppositeDirection;
+	private double[] position;
+	private double[] direction;
+	private double[] oppositeDirection;
 	
 	public LightDirected() {
 		super();				
@@ -19,10 +17,13 @@ public class LightDirected extends Light {
 
 	@Override
 	public void setParameter(String name, String[] args) throws Exception {
-		if (parseParameter(name, args)) return; // parse common parameters using the superclass
-		
+		if ("color".equals(name)) {
+            super.setColor(MathUtils.parseVector(args));
+            return;
+        }
+
 		if ("direction".equals(name)) {
-			direction = Parser.parseVector(args);
+			direction = MathUtils.parseVector(args);
 			MathUtils.normalize(direction);
 			
 			oppositeDirection = MathUtils.oppositeVector(direction);
@@ -40,7 +41,7 @@ public class LightDirected extends Light {
 	}
 
 	@Override
-	public void postInit(List<IEntity> entities) throws ParseException {
+	public void postInit(List<IEntity> entities) throws Exception {
 		position = new double[] { Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY };		
 	}
 

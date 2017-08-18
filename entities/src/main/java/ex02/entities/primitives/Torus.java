@@ -4,7 +4,6 @@ import java.util.List;
 
 import Jama.Matrix;
 
-import ex02.Parser;
 import ex02.blas.MathUtils;
 import ex02.blas.RootFinder;
 import ex02.entities.IEntity;
@@ -173,10 +172,10 @@ public class Torus extends Primitive {
     @Override
     public void setParameter(String name, String[] args) throws Exception {
         if (surface.parseParameter(name, args)) return;
-        if ("center".equals(name)) center = Parser.parseVector(args);
+        if ("center".equals(name)) center = MathUtils.parseVector(args);
         if ("central-radius".equals(name)) centralRadius = Double.parseDouble(args[0]);
         if ("tube-radius".equals(name)) tubeRadius = Double.parseDouble(args[0]);
-        if ("normal".equals(name)) normal = Parser.parseVector(args);
+        if ("normal".equals(name)) normal = MathUtils.parseVector(args);
     }
 
 }

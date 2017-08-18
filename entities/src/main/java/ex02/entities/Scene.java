@@ -4,9 +4,7 @@ package ex02.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-import ex02.Parser;
-import ex02.Utils;
-import ex02.Parser.ParseException;
+import ex02.blas.MathUtils;
 import ex02.entities.lights.Light;
 import ex02.entities.primitives.Primitive;
 
@@ -33,7 +31,8 @@ public class Scene implements IEntity {
     int canvasWidth;
     int canvasHeight;
 
-    public void postInit(List<IEntity> entities) throws ParseException {
+    @Override
+    public void postInit(List<IEntity> entities) throws Exception {
     }
 
     // Returns the color of the background (or texture) at the given coordinates
@@ -121,15 +120,21 @@ public class Scene implements IEntity {
         this.superSampleWidth = superSampleWidth;
     }
 
-    // Read parameters into members
+    /**
+     * Read parameters into members
+     * @param name parameter name
+     * @param args parameter value
+     * @throws Exception
+     */
+    @Override
     public void setParameter(String name, String[] args) throws Exception {
-        if ("background-col".equals(name)) backgroundColor = Parser.parseVector(args);
-        if ("background-tex".equals(name)) {
-            backgroundTexture = Utils.loadTexture(args[0]);
-            textureWidth = backgroundTexture.length;
-            textureHeight = backgroundTexture[0].length;
-        }
-        if ("ambient-light".equals(name)) ambientLight = Parser.parseVector(args);
+        if ("background-col".equals(name)) backgroundColor = MathUtils.parseVector(args);
+//        if ("background-tex".equals(name)) {
+//            backgroundTexture = Utils.loadTexture(args[0]);
+//            textureWidth = backgroundTexture.length;
+//            textureHeight = backgroundTexture[0].length;
+//        }
+        if ("ambient-light".equals(name)) ambientLight = MathUtils.parseVector(args);
         if ("super-samp-width".equals(name)) superSampleWidth = Integer.parseInt(args[0]);
     }
 

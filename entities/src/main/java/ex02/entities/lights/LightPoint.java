@@ -4,16 +4,13 @@ import java.util.List;
 
 import ex02.blas.MathUtils;
 import ex02.entities.IEntity;
-import ex02.Parser;
-import ex02.Parser.ParseException;
 
 public class LightPoint extends Light {
 
-	double[] attenuation = {1, 0, 0};
-	double[] color = {1, 1, 1};
+    private double[] attenuation = {1, 0, 0};
+    private double[] color = {1, 1, 1};
 	
 	public LightPoint() {
-		
 	}
 	
 	// This constructor is called by LightArea
@@ -25,9 +22,9 @@ public class LightPoint extends Light {
 
 	@Override
 	public void setParameter(String name, String[] args) throws Exception {
-		if ("pos".equals(name)) setPosition(Parser.parseVector(args));
-		if ("attenuation".equals(name)) attenuation = Parser.parseVector(args);
-		if ("color".equals(name)) color = Parser.parseVector(args);		
+		if ("pos".equals(name)) setPosition(MathUtils.parseVector(args));
+		if ("attenuation".equals(name)) attenuation = MathUtils.parseVector(args);
+		if ("color".equals(name)) color = MathUtils.parseVector(args);
 	}
 
 	@Override
@@ -42,7 +39,7 @@ public class LightPoint extends Light {
 	}
 
 	@Override
-	public void postInit(List<IEntity> entities) throws ParseException {
+	public void postInit(List<IEntity> entities) throws Exception {
 	}
 
 	@Override

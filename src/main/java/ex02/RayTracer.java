@@ -229,8 +229,8 @@ public class RayTracer {
         return color;
     }
 
-    void renderTo(ImageData dat, Canvas canvas) throws Parser.ParseException, Exception {
-        Parser parser = new Parser(display);
+    void renderTo(ImageData dat, Canvas canvas) throws Exception {
+        final Parser parser = new Parser();
 
         try {
             parser.parse(new StringReader(m_sceneText.getText()));
@@ -391,9 +391,11 @@ public class RayTracer {
                 try {
                     m_imgdat = new ImageData(m_rect.width, m_rect.height, 24, new PaletteData(0xFF0000, 0xFF00, 0xFF));
                     renderTo(m_imgdat, canvas);
-                } catch (Parser.ParseException e) {
-                    System.out.println("Error Parsing text: " + e.getMessage());
-                } catch (Exception e) {
+                }
+//                catch (Parser.ParseException e) {
+//                    System.out.println("Error Parsing text: " + e.getMessage());
+//                }
+                catch (Exception e) {
                     System.out.println("Error Rendering scene: " + e.getMessage());
                     e.printStackTrace();
                 }

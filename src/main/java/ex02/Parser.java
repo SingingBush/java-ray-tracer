@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.eclipse.swt.graphics.Device;
+//import org.eclipse.swt.graphics.Device;
 
 import ex02.entities.EntityFactory;
 import ex02.entities.IEntity;
@@ -15,33 +15,21 @@ public class Parser {
     IEntity curEntity;
     List<IEntity> entities = new ArrayList<>();
     Scene scene;
-    static Device device;
+    //static Device device;
 
-    public static class ParseException extends Exception {
-        static final long serialVersionUID = 1;
+//    public static class ParseException extends Exception {
+//        static final long serialVersionUID = 1;
+//
+//        public ParseException(String msg) {
+//            super(msg);
+//        }
+//    }
+//
+//    public Parser(Device device) {
+//        Parser.device = device;
+//    }
 
-        public ParseException(String msg) {
-            super(msg);
-        }
-    }
-
-    public Parser(Device device) {
-        Parser.device = device;
-    }
-
-    public static double[] parseVector(String[] vecElems) throws Exception {
-        double[] result = new double[3];
-
-        if (vecElems.length != 3)
-            throw new Exception("Invalid vector string");
-
-        for (int i = 0; i < 3; i++)
-            result[i] = Double.parseDouble(vecElems[i]);
-
-        return result;
-    }
-
-    public final void parse(Reader in) throws IOException, ParseException, Exception {
+    public final void parse(Reader in) throws IOException, Exception {
         BufferedReader r = new BufferedReader(in);
         String line, curobj = null;
         int lineNum = 0;
@@ -83,24 +71,17 @@ public class Parser {
         endFile();
     }
 
-    // utility assetion.
-    // use this for parameter validity checks.
-    static void pAssert(Boolean v, String msg) throws ParseException {
-        if (!v)
-            throw new ParseException(msg);
-    }
-
     ///////////////////// override these methods in your implementation //////////////////
 
     public void startFile() {
         //System.out.println("----------------");
     }
 
-    public void endFile() throws ParseException, Exception {
+    public void endFile() throws Exception {
         if (scene != null) {
             scene.setEntities(entities);
         } else {
-            throw new ParseException("Scene object not found.");
+            throw new Exception("Scene object not found.");
         }
 
         //System.out.println("================");
@@ -108,9 +89,9 @@ public class Parser {
 
     // start a new object definition
     // return true if recognized
-    public boolean addObject(String name) throws ParseException {
+    public boolean addObject(String name) throws Exception {
         curEntity = EntityFactory.createEntity(name);
-        if (curEntity == null) throw new ParseException("Unknown entity encountered: " + name);
+        if (curEntity == null) throw new Exception("Unknown entity encountered: " + name);
 
         if (name.equals("scene")) scene = (Scene) curEntity;
         //System.out.println("OBJECT: " + name);
@@ -119,7 +100,7 @@ public class Parser {
 
     // set a specific parameter for the current object
     // return true if recognized
-    public boolean setParameter(String name, String[] args) throws ParseException {
+    public boolean setParameter(String name, String[] args) {
         try {
             curEntity.setParameter(name, args);
             //System.out.print("PARAM: " + name);
@@ -136,7 +117,7 @@ public class Parser {
     // finish the parsing of the current object
     // here is the place to perform any validations over the parameters and
     // final initializations.
-    public void commit() throws ParseException {
+    public void commit() throws Exception {
         entities.add(curEntity);
         curEntity.postInit(entities);
     }

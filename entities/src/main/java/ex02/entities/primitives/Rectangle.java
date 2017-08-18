@@ -2,7 +2,6 @@ package ex02.entities.primitives;
 
 import java.util.List;
 
-import ex02.Parser;
 import ex02.blas.MathUtils;
 import ex02.entities.IEntity;
 import ex02.entities.Ray;
@@ -194,9 +193,9 @@ public class Rectangle extends Primitive {
 
     public void setParameter(String name, String[] args) throws Exception {
         if (surface.parseParameter(name, args)) return;
-        if ("p0".equals(name)) p0 = Parser.parseVector(args);
-        if ("p1".equals(name)) p1 = Parser.parseVector(args);
-        if ("p2".equals(name)) p2 = Parser.parseVector(args);
+        if ("p0".equals(name)) p0 = MathUtils.parseVector(args);
+        if ("p1".equals(name)) p1 = MathUtils.parseVector(args);
+        if ("p2".equals(name)) p2 = MathUtils.parseVector(args);
     }
 
 

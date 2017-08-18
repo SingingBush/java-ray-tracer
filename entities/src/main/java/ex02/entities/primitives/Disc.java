@@ -1,8 +1,6 @@
 package ex02.entities.primitives;
 
 import java.util.List;
-
-import ex02.Parser;
 import ex02.blas.MathUtils;
 import ex02.entities.IEntity;
 import ex02.entities.Ray;
@@ -15,7 +13,7 @@ public class Disc extends Primitive {
     private double[] intersectionPoint = null;
     private double d;
     private double[] referenceVector = new double[3];
-    double[] pivotVector;
+    private double[] pivotVector;
 
     /**
      * First verifies that the given ray intersects with the 3D plane containing the disc
@@ -83,9 +81,9 @@ public class Disc extends Primitive {
     @Override
     public void setParameter(String name, String[] args) throws Exception {
         if (surface.parseParameter(name, args)) return;
-        if ("center".equals(name)) center = Parser.parseVector(args);
+        if ("center".equals(name)) center = MathUtils.parseVector(args);
         if ("normal".equals(name)) {
-            normal = Parser.parseVector(args);
+            normal = MathUtils.parseVector(args);
             MathUtils.normalize(normal);
         }
         if ("radius".equals(name)) radius = Double.parseDouble(args[0]);

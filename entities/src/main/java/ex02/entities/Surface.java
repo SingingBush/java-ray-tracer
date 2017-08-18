@@ -1,28 +1,30 @@
 package ex02.entities;
 
-import ex02.Parser;
-import ex02.Utils;
+import ex02.blas.MathUtils;
+
+import java.util.Arrays;
 
 public class Surface {
-    public static final int TYPE_FLAT = 1;
+
+    private static final int TYPE_FLAT = 1;
     public static final int TYPE_CHECKERS = 2;
     public static final int TYPE_TEXTURE = 3;
 
-    int typeId;
-    String type;
-    double[] diffuse = {0.8F, 0.8F, 0.8F};
-    double[] specular = {1.0F, 1.0F, 1.0F};
-    double[] ambient = {0.1F, 0.1F, 0.1F};
-    double[] emission = {0, 0, 0};
-    double shininess = 100.0F;
-    double checkersSize = 0.1F;
-    double[] checkersDiffuse1 = {1.0F, 1.0F, 1.0F};
-    double[] checkersDiffuse2 = {0.1F, 0.1F, 0.1F};
-    double reflectance = 0.0F;
-    String textureFileName;
-    int textureWidth;
-    int textureHeight;
-    double[][][] texture;
+    private int typeId;
+    private String type;
+    private double[] diffuse = {0.8F, 0.8F, 0.8F};
+    private double[] specular = {1.0F, 1.0F, 1.0F};
+    private double[] ambient = {0.1F, 0.1F, 0.1F};
+    private double[] emission = {0, 0, 0};
+    private double shininess = 100.0F;
+    private double checkersSize = 0.1F;
+    private double[] checkersDiffuse1 = {1.0F, 1.0F, 1.0F};
+    private double[] checkersDiffuse2 = {0.1F, 0.1F, 0.1F};
+    private double reflectance = 0.0F;
+    private String textureFileName;
+    private int textureWidth;
+    private int textureHeight;
+    private double[][][] texture;
 
     // Returns the texture color for a given 2D point in [0, 1] coordinates
     public double[] getTextureColor(double[] point2D) {
@@ -63,19 +65,19 @@ public class Surface {
         }
 
         if ("mtl-diffuse".equals(name)) {
-            diffuse = Parser.parseVector(args);
+            diffuse = MathUtils.parseVector(args);
             parsed = true;
         }
         if ("mtl-specular".equals(name)) {
-            specular = Parser.parseVector(args);
+            specular = MathUtils.parseVector(args);
             parsed = true;
         }
         if ("mtl-ambient".equals(name)) {
-            ambient = Parser.parseVector(args);
+            ambient = MathUtils.parseVector(args);
             parsed = true;
         }
         if ("mtl-emission".equals(name)) {
-            emission = Parser.parseVector(args);
+            emission = MathUtils.parseVector(args);
             parsed = true;
         }
         if ("mtl-shininess".equals(name)) {
@@ -87,20 +89,20 @@ public class Surface {
             parsed = true;
         }
         if ("checkers-diffuse1".equals(name)) {
-            checkersDiffuse1 = Parser.parseVector(args);
+            checkersDiffuse1 = MathUtils.parseVector(args);
             parsed = true;
         }
         if ("checkers-diffuse2".equals(name)) {
-            checkersDiffuse2 = Parser.parseVector(args);
+            checkersDiffuse2 = MathUtils.parseVector(args);
             parsed = true;
         }
-        if ("texture".equals(name)) {
-            textureFileName = args[0];
-            parsed = true;
-            texture = Utils.loadTexture(textureFileName);
-            textureWidth = texture.length;
-            textureHeight = texture[0].length;
-        }
+//        if ("texture".equals(name)) {
+//            textureFileName = args[0];
+//            parsed = true;
+//            texture = Utils.loadTexture(textureFileName);
+//            textureWidth = texture.length;
+//            textureHeight = texture[0].length;
+//        }
         if ("reflectance".equals(name)) {
             reflectance = Double.parseDouble(args[0]);
             parsed = true;
@@ -205,5 +207,25 @@ public class Surface {
         this.typeId = typeId;
     }
 
-
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Surface{");
+        sb.append("typeId=").append(typeId);
+        sb.append(", type='").append(type).append('\'');
+        sb.append(", diffuse=").append(Arrays.toString(diffuse));
+        sb.append(", specular=").append(Arrays.toString(specular));
+        sb.append(", ambient=").append(Arrays.toString(ambient));
+        sb.append(", emission=").append(Arrays.toString(emission));
+        sb.append(", shininess=").append(shininess);
+        sb.append(", checkersSize=").append(checkersSize);
+        sb.append(", checkersDiffuse1=").append(Arrays.toString(checkersDiffuse1));
+        sb.append(", checkersDiffuse2=").append(Arrays.toString(checkersDiffuse2));
+        sb.append(", reflectance=").append(reflectance);
+        sb.append(", textureFileName='").append(textureFileName).append('\'');
+        sb.append(", textureWidth=").append(textureWidth);
+        sb.append(", textureHeight=").append(textureHeight);
+        sb.append(", texture=").append(Arrays.toString(texture));
+        sb.append('}');
+        return sb.toString();
+    }
 }

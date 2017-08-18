@@ -1,9 +1,31 @@
 package ex02.blas;
 
 
-// Static mathematical utility class for linear algebra and other things
+/**
+ * Static mathematical utility class for linear algebra and other things
+ */
 public class MathUtils {
-	
+
+    /**
+     * This was originally in the Parser class of the main package. Moved out as
+     * that was the wrong place for it.
+     * @param vecElems a String array containing 3 double values
+     * @return Vector
+     */
+    public static double[] parseVector(final String[] vecElems) {
+        if (vecElems == null || vecElems.length != 3) {
+            throw new IllegalArgumentException("Invalid vector string");
+        }
+
+        double[] result = new double[3];
+
+        for (int i = 0; i < 3; i++) {
+            result[i] = Double.parseDouble(vecElems[i]);
+        }
+
+        return result;
+    }
+
 	// Returns the square of a
 	public static double sqr(double a) {
 		return a * a;

@@ -2,7 +2,9 @@ package ex02.entities;
 
 import ex02.entities.primitives.Primitive;
 
-// Helper class representing an intersection
+/**
+ * Helper class representing an intersection
+ */
 public class Intersection {
 
     private Primitive primitive;
@@ -17,15 +19,16 @@ public class Intersection {
         return primitive;
     }
 
-    public void setPrimitive(Primitive primitive) {
-        this.primitive = primitive;
-    }
-
     public double getDistance() {
         return distance;
     }
 
-    public void setDistance(double distance) {
-        this.distance = distance;
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Intersection{");
+        sb.append("primitive=").append(primitive);
+        sb.append(", distance=").append(distance);
+        sb.append('}');
+        return sb.toString();
     }
 }

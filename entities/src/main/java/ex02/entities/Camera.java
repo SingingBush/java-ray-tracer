@@ -2,8 +2,6 @@ package ex02.entities;
 
 import java.util.List;
 
-import ex02.Parser;
-import ex02.Parser.ParseException;
 import ex02.blas.MathUtils;
 
 public class Camera implements IEntity {
@@ -20,13 +18,13 @@ public class Camera implements IEntity {
     // Read parameters into members
     @Override
     public void setParameter(String name, String[] args) throws Exception {
-        if ("eye".equals(name)) eye = Parser.parseVector(args);
-        if ("look-at".equals(name)) lookAt = Parser.parseVector(args);
+        if ("eye".equals(name)) eye = MathUtils.parseVector(args);
+        if ("look-at".equals(name)) lookAt = MathUtils.parseVector(args);
         if ("direction".equals(name)) {
-            direction = Parser.parseVector(args);
+            direction = MathUtils.parseVector(args);
             MathUtils.normalize(direction);
         }
-        if ("up-direction".equals(name)) upDirection = Parser.parseVector(args);
+        if ("up-direction".equals(name)) upDirection = MathUtils.parseVector(args);
         if ("screen-dist".equals(name)) screenDist = Double.parseDouble(args[0]);
         if ("screen-width".equals(name)) screenWidth = Double.parseDouble(args[0]);
     }
@@ -82,7 +80,7 @@ public class Camera implements IEntity {
         this.rightDirection = rightDirection;
     }
 
-    public void postInit(List<IEntity> entities) throws ParseException {
+    public void postInit(List<IEntity> entities) throws Exception {
         // If we didn't get a direction parameter, set it using the look-at parameter
         if (direction == null) {
             direction = MathUtils.calcPointsDiff(eye, lookAt);
