@@ -22,56 +22,51 @@ package ex02.blas;
  */
 
 /**
- * 
  * This is a java implementation of a root finder for quadrics, cubics, and
  * quartics. It is adapted from the following resource.
- * 
+ *
  * @author Nathaniel Troutman
- * 
- * START-REFERENCE:: 
+ * <p>
+ * START-REFERENCE::
  * Roots3And4.c
- * 
+ * <p>
  * Used from:
  * http://www.martinreddy.net/ukvrsig/objects/docs/ggems/GemsI/Roots3And4.c
- * 
+ * <p>
  * Utility functions to find cubic and quartic roots, coefficients are passed
  * like this:
- * 
+ * <p>
  * c[0] + c[1]*x + c[2]*x^2 + c[3]*x^3 + c[4]*x^4 = 0
- * 
+ * <p>
  * The functions return the number of non-complex roots and put the values into
  * the s array.
- * 
+ * <p>
  * Author: Jochen Schwarze (schwarze@isa.de)
- * 
+ * <p>
  * Jan 26, 1990 Version for Graphics Gems Oct 11, 1990 Fixed sign problem for
  * negative q's in SolveQuartic (reported by Mark Podlipec), Old-style function
  * definitions, IsZero() as a macro
  * END-REFERENCE:
  */
-public class RootFinder
-{
-    public static void main( String[] args ) throws Exception
-    {
-        double[] coeffs = { 1, 5, 3 };
-        double[] roots = SolveQuadric( coeffs );
+public class RootFinder {
 
-        for ( int i = 0; i < roots.length; i++ )
-        {
-            System.out.println( i + ":" + roots[i] );
+    public static void main(String[] args) throws Exception {
+        double[] coeffs = {1, 5, 3};
+        double[] roots = SolveQuadric(coeffs);
+
+        for (int i = 0; i < roots.length; i++) {
+            System.out.println(i + ":" + roots[i]);
         }
     }
 
     /* epsilon surrounding for near zero values */
     public static final double EQN_EPS = 1e-9;
 
-    public static final boolean IsZero( double x )
-    {
+    public static final boolean IsZero(double x) {
         return ((x) > -EQN_EPS && (x) < EQN_EPS);
     }
 
-    public static double[] SolveQuadric( double[] c )
-    {
+    public static double[] SolveQuadric(double[] c) {
         // Dim the roots array
         double[] s = new double[0];
 
@@ -84,14 +79,11 @@ public class RootFinder
 
         D = p * p - q;
 
-        if ( IsZero( D ) )
-        {
+        if (IsZero(D)) {
             s = new double[1];
             s[0] = -p;
-        }
-        else if ( D > 0 )
-        {
-            double sqrt_D = Math.sqrt( D );
+        } else if (D > 0) {
+            double sqrt_D = Math.sqrt(D);
             s = new double[2];
             s[0] = sqrt_D - p;
             s[1] = -sqrt_D - p;
@@ -100,8 +92,7 @@ public class RootFinder
         return s;
     }
 
-    public static double[] SolveCubic( double[] c )
-    {
+    public static double[] SolveCubic(double[] c) {
         // Dim the roots array
         double[] s = new double[0];
 
@@ -127,40 +118,32 @@ public class RootFinder
         cb_p = p * p * p;
         D = q * q + cb_p;
 
-        if ( IsZero( D ) )
-        {
-            if ( IsZero( q ) )
-            /* one triple solution */
-            {
+        if (IsZero(D)) {
+            if (IsZero(q))
+            /* one triple solution */ {
                 s = new double[1];
                 s[0] = 0;
-            }
-            else
-            /* one single and one double solution */
-            {
-                double u = Math.cbrt( -q );
+            } else
+            /* one single and one double solution */ {
+                double u = Math.cbrt(-q);
                 s = new double[2];
                 s[0] = 2 * u;
                 s[1] = -u;
             }
-        }
-        else if ( D < 0 )
-        /* Casus irreducibilis: three real solutions */
-        {
-            double phi = 1.0 / 3 * Math.acos( -q / Math.sqrt( -cb_p ) );
-            double t = 2 * Math.sqrt( -p );
+        } else if (D < 0)
+        /* Casus irreducibilis: three real solutions */ {
+            double phi = 1.0 / 3 * Math.acos(-q / Math.sqrt(-cb_p));
+            double t = 2 * Math.sqrt(-p);
 
             s = new double[3];
-            s[0] = t * Math.cos( phi );
-            s[1] = -t * Math.cos( phi + Math.PI / 3 );
-            s[2] = -t * Math.cos( phi - Math.PI / 3 );
-        }
-        else
-        /* one real solution */
-        {
-            double sqrt_D = Math.sqrt( D );
-            double u = Math.cbrt( sqrt_D - q );
-            double v = -Math.cbrt( sqrt_D + q );
+            s[0] = t * Math.cos(phi);
+            s[1] = -t * Math.cos(phi + Math.PI / 3);
+            s[2] = -t * Math.cos(phi - Math.PI / 3);
+        } else
+        /* one real solution */ {
+            double sqrt_D = Math.sqrt(D);
+            double u = Math.cbrt(sqrt_D - q);
+            double v = -Math.cbrt(sqrt_D + q);
 
             s = new double[1];
             s[0] = u + v;
@@ -169,14 +152,13 @@ public class RootFinder
         /* resubstitute */
         sub = 1.0 / 3 * A;
 
-        for ( i = 0; i < s.length; ++i )
+        for (i = 0; i < s.length; ++i)
             s[i] -= sub;
 
         return s;
     }
 
-    public static double[] SolveQuartic( double[] c )
-    {
+    public static double[] SolveQuartic(double[] c) {
         // Dim the roots array
         double[] s = new double[4];
 
@@ -204,8 +186,7 @@ public class RootFinder
         r = -3.0 / 256 * sq_A * sq_A + 1.0 / 16 * sq_A * B - 1.0 / 4 * A * C
                 + D;
 
-        if ( IsZero( r ) )
-        {
+        if (IsZero(r)) {
             /* no absolute term: y(y^3 + py + q) = 0 */
             coeffs[0] = q;
             coeffs[1] = p;
@@ -213,15 +194,13 @@ public class RootFinder
             coeffs[3] = 1;
 
             s = new double[3];
-            double[] sTemp = SolveCubic( coeffs );
-            
+            double[] sTemp = SolveCubic(coeffs);
+
             for (int j = 0; j < sTemp.length; j++) {
-				s[j] = sTemp[j];
-			}
+                s[j] = sTemp[j];
+            }
             s[2] = 0;
-        }
-        else
-        {
+        } else {
             /* solve the resolvent cubic ... */
             coeffs[0] = 1.0 / 2 * r * p - 1.0 / 8 * q * q;
             coeffs[1] = -r;
@@ -229,7 +208,7 @@ public class RootFinder
             coeffs[3] = 1;
 
             double[] roots;
-            roots = SolveCubic( coeffs );
+            roots = SolveCubic(coeffs);
 
             /* ... and take the one real solution ... */
             z = roots[0];
@@ -238,55 +217,51 @@ public class RootFinder
             u = z * z - r;
             v = 2 * z - p;
 
-            if ( IsZero( u ) )
+            if (IsZero(u))
                 u = 0;
-            else if ( u > 0 )
-                u = Math.sqrt( u );
+            else if (u > 0)
+                u = Math.sqrt(u);
             else
                 noRoots = true;
 
-            if ( IsZero( v ) )
+            if (IsZero(v))
                 v = 0;
-            else if ( v > 0 )
-                v = Math.sqrt( v );
+            else if (v > 0)
+                v = Math.sqrt(v);
             else
                 noRoots = true;
 
-            if ( !noRoots )
-            {
+            if (!noRoots) {
                 coeffs[0] = z - u;
                 coeffs[1] = q < 0 ? -v : v;
                 coeffs[2] = 1;
 
-                roots = SolveQuadric( coeffs );
+                roots = SolveQuadric(coeffs);
 
                 coeffs[0] = z + u;
                 coeffs[1] = q < 0 ? v : -v;
                 coeffs[2] = 1;
 
-                double[] secondQuadric = SolveQuadric( coeffs );
+                double[] secondQuadric = SolveQuadric(coeffs);
 
                 s = new double[roots.length + secondQuadric.length];
                 //if(s == null || s.length == 0) return s;
-                for ( i = 0; i < roots.length; i++ )
-                {
+                for (i = 0; i < roots.length; i++) {
                     s[i] = roots[i];
                 }
 
                 //if(secondQuadric == null || secondQuadric.length == 0) return s;
-                for ( i = roots.length; i < s.length; i++ )
-                {
+                for (i = roots.length; i < s.length; i++) {
                     s[i] = secondQuadric[i - roots.length];
                 }
             }
         }
 
         /* resubstitute */
-        if ( !noRoots )
-        {
+        if (!noRoots) {
             sub = 1.0 / 4 * A;
 
-            for ( i = 0; i < s.length; ++i )
+            for (i = 0; i < s.length; ++i)
                 s[i] -= sub;
         }
 

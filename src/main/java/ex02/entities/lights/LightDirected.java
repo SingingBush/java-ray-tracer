@@ -8,6 +8,7 @@ import ex02.blas.MathUtils;
 import ex02.entities.IEntity;
 
 public class LightDirected extends Light {
+
 	public double[] position;
 	public double[] direction;		
 	public double[] oppositeDirection;
@@ -15,7 +16,8 @@ public class LightDirected extends Light {
 	public LightDirected() {
 		super();				
 	}
-	
+
+	@Override
 	public void setParameter(String name, String[] args) throws Exception {
 		if (parseParameter(name, args)) return; // parse common parameters using the superclass
 		
@@ -26,9 +28,10 @@ public class LightDirected extends Light {
 			oppositeDirection = MathUtils.oppositeVector(direction);
 		}
 	}
-	
+
+	@Override
 	public double[] getAmountOfLight(double[] point) {					
-		return color; // constant light, regardless of distance to target
+		return super.getColor(); // constant light, regardless of distance to target
 	}
 	
 	@Override	
@@ -36,6 +39,7 @@ public class LightDirected extends Light {
 		return position;
 	}
 
+	@Override
 	public void postInit(List<IEntity> entities) throws ParseException {
 		position = new double[] { Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY };		
 	}

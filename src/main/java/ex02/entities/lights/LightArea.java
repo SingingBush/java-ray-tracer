@@ -10,11 +10,13 @@ import ex02.entities.IEntity;
 // Note: LightArea instances are only alive during parse-time. As soon as a LightArea has been fully parsed,
 // it replaces itself with a grid of point-lights and ceases to exist.
 public class LightArea extends Light {
+
 	double[] p0, p1, p2;	
 	double[] attenuation = {1, 0, 0};
 	double[] color = {1, 1, 1};
 	int gridWidth = 1;
-	
+
+	@Override
 	public void setParameter(String name, String[] args) throws Exception {
 		if ("p0".equals(name)) p0 = Parser.parseVector(args);	
 		if ("p1".equals(name)) p1 = Parser.parseVector(args);
@@ -25,10 +27,12 @@ public class LightArea extends Light {
 	}
 	
 	// This method will be never called (see class notes).
+    @Override
 	public double[] getAmountOfLight(double[] point) {
 		return null;
 	}
 
+	@Override
 	public void postInit(List<IEntity> entities) throws ParseException {
 		// Replace the LightArea with a grid of point-light objects.
 		double[] effectiveAttenuation = MathUtils.multiplyScalar(attenuation, MathUtils.sqr(gridWidth));

@@ -1,14 +1,13 @@
 package ex02.blas;
 
-// Vector class for vectors having a position, direction and magnitude properties
+/**
+ * Vector class for vectors having a position, direction and magnitude properties
+ */
 public class Vector3D {
-	double[] position;
-	double[] direction;	
-	double magnitude;
-	
-	public Vector3D() {
-		
-	}
+
+	private double[] position;
+	private double[] direction;
+	private double magnitude;
 	
 	// Constructor
 	public Vector3D(double[] position, double[] direction, double magnitude) throws Exception {
@@ -44,8 +43,7 @@ public class Vector3D {
 				this.direction[1] * otherVec.direction[1] +
 				this.direction[2] * otherVec.direction[2]);
 	}
-	
-		
+
 	// Reflects a vector around a normal. assumes the normal vector is normalized
 	public void reflectAround(double[] normal) {
 		if (magnitude != 1) normalize();
@@ -57,8 +55,7 @@ public class Vector3D {
 		direction[2] = -direction[2] + 2 * normal[2] * dotProduct;
 	}
 	
-	
-	// Returns the end of the vector as a point in 3D space 
+	// Returns the end of the vector as a point in 3D space
 	public double[] getEndPoint() {
 		double[] endPoint = { position[0] + magnitude * direction[0], 
 							 position[1] + magnitude * direction[1], 

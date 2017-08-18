@@ -4,8 +4,9 @@ import ex02.Parser;
 import ex02.entities.IEntity;
 
 public abstract class Light implements IEntity {	
-	double[] position;
-	double[] color = {1, 1, 1};
+
+	private double[] position;
+	private double[] color = {1, 1, 1};
 	
 	public abstract double[] getAmountOfLight(double[] point);
 	

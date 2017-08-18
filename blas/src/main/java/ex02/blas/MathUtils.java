@@ -1,6 +1,5 @@
 package ex02.blas;
 
-import ex02.Parser.ParseException;
 
 // Static mathematical utility class for linear algebra and other things
 public class MathUtils {
@@ -17,6 +16,9 @@ public class MathUtils {
 	
 	// Vector addition, adds addition to vec
 	public static void addVector(double[] vec, double addition[]) {
+        checkSize(vec);
+        checkSize(addition);
+
 		vec[0] += addition[0]; 
 		vec[1] += addition[1];
 		vec[2] += addition[2];
@@ -24,6 +26,9 @@ public class MathUtils {
 	
 	// Multiplies addition by a scalar and then adds the result to vec
 	public static void addVectorAndMultiply(double[] vec, double addition[], double scalar) {
+        checkSize(vec);
+        checkSize(addition);
+
 		vec[0] += addition[0] * scalar; 
 		vec[1] += addition[1] * scalar;
 		vec[2] += addition[2] * scalar;
@@ -31,6 +36,8 @@ public class MathUtils {
 	
 	// Multiplies vec by a scalar
 	public static void multiplyVectorByScalar(double[] vec, double scalar) {
+	    checkSize(vec);
+
 		vec[0] *= scalar; 
 		vec[1] *= scalar;
 		vec[2] *= scalar;
@@ -39,31 +46,43 @@ public class MathUtils {
 	
 	/**
 	 * Calculates a dot product between two given vectors
-	 * @param vec1
-	 * @param vec2
-	 * @return
+	 * @param vec1 Vector
+	 * @param vec2 Vector
+	 * @return dot product
 	 */
 	public static double dotProduct(double[] vec1, double[] vec2) {
+        checkSize(vec1);
+        checkSize(vec2);
+
 		return vec1[0] * vec2[0]  +  vec1[1] * vec2[1]  +  vec1[2] * vec2[2] ;
 	}	
 	
 	/**
-	 * Calculates the differnce between two point in 3D space
-	 * @param p1
-	 * @param p2
-	 * @return
+	 * Calculates the difference between two point in 3D space
+	 * @param p1 Vector
+	 * @param p2 Vector
+	 * @return Vector (the difference)
 	 */
 	public static double[] calcPointsDiff(double[] p1, double[] p2) {
+        checkSize(p1);
+        checkSize(p2);
+
 		return new double [] { p2[0] - p1[0] , p2[1] - p1[1] , p2[2] - p1[2] };
 	}
 
 	// Returns the norm of the difference between this vector's position point and another point
-	public static double norm(double[] p) {					
+	public static double norm(double[] p) {
+        checkSize(p);
+
 		return Math.sqrt(sqr(p[0]) + sqr(p[1]) + sqr(p[2]));
 	}
 
-	// Normalizes a vector
-	public static void normalize(double[] vec) throws ParseException {
+    /**
+     * @param vec a Vector (or point)
+     */
+	public static void normalize(double[] vec) {
+        checkSize(vec);
+
 		double norm = norm(vec);
 		
 		if (norm == 0)
@@ -74,39 +93,42 @@ public class MathUtils {
 		vec[2] /= norm;
 	}
 
-	// Returns the cross product of 2 vectors
-	public static double[] crossProduct(double[] d1, double[] d2) {				
-		double[] result = { (d1[1] * d2[2]) - (d1[2] * d2[1]), (d1[2] * d2[0]) - (d1[0] * d2[2]), (d1[0] * d2[1]) - (d1[1] * d2[0]) };
-		
-		return result;  		
+    // Returns the cross product of 2 vectors
+	public static double[] crossProduct(double[] d1, double[] d2) {
+        checkSize(d1);
+        checkSize(d2);
+
+        return new double[]{ (d1[1] * d2[2]) - (d1[2] * d2[1]), (d1[2] * d2[0]) - (d1[0] * d2[2]), (d1[0] * d2[1]) - (d1[1] * d2[0]) };
 	}	
 	
 	// Reflects a vector around a normal vector. both vectors are assumed to have the same shift from the origin
 	public static double[] reflectVector(double[] vec, double[] normal) {
+        checkSize(vec);
+        checkSize(normal);
+
 		double dotProduct = MathUtils.dotProduct(vec, normal);
-		
-		double[] r = new double[] { -vec[0] + 2 * normal[0] * dotProduct,
-								  -vec[1] + 2 * normal[1] * dotProduct,
-								  -vec[2] + 2 * normal[2] * dotProduct };
-						
-		return r;
+
+        return new double[] { -vec[0] + 2 * normal[0] * dotProduct,
+                                  -vec[1] + 2 * normal[1] * dotProduct,
+                                  -vec[2] + 2 * normal[2] * dotProduct };
 	}
 	
 	// Returns the vector opposite to vec
-	public static double[] oppositeVector(double[] vec) {				
-		double[] r = new double[] { -vec[0], -vec[1], -vec[2] };
-						
-		return r;
+	public static double[] oppositeVector(double[] vec) {
+        return new double[] { -vec[0], -vec[1], -vec[2] };
 	}
 	
 	/**
 	 * Given three points, this method returns true if they are collinear, and false otherwise.
-	 * @param p0
-	 * @param p1
-	 * @param p2
-	 * @return
+	 * @param p0 Vector
+	 * @param p1 Vector
+	 * @param p2 Vector
+	 * @return true if they are collinear
 	 */
 	public static boolean arePointsCollinear(double[] p0, double[] p1, double[] p2) {
+        checkSize(p0);
+        checkSize(p1);
+        checkSize(p2);
 
 		// coefficients for testing collinearity
 		double a,b,c;
@@ -132,10 +154,10 @@ public class MathUtils {
 	 * Returns Double.POSITIVE_INFINITY if no roots exist. <br />
 	 * Returns (-b) / (2 * a) if only one root exists. <br />
 	 * Returns the minimum root if two roots exist.
-	 * @param a
-	 * @param b
-	 * @param c
-	 * @return
+	 * @param a coefficient
+	 * @param b coefficient
+	 * @param c coefficient
+	 * @return the minimum root if two roots exist
 	 */
 	public static double[] solveQuadraticEquation(double a, double b, double c) {
 		
@@ -181,9 +203,11 @@ public class MathUtils {
 	 * Multiplies the given vector by the given scalar
 	 * @param vec Vector (or point)
 	 * @param t	  Scalar
-	 * @return
+	 * @return Vector
 	 */
 	public static double[] multiplyScalar(double[] vec, double t) {
+        checkSize(vec);
+
 		vec[0] *= t;
 		vec[1] *= t;
 		vec[2] *= t;
@@ -192,18 +216,29 @@ public class MathUtils {
 
 	/**
 	 * Add two points in 3D
-	 * @param a
-	 * @param b
-	 * @return
+	 * @param a Vector (or point)
+	 * @param b Vector (or point)
+	 * @return Vector
 	 */
 	public static double[] addPoints(double[] a, double[] b) {
-		double[] c = { a[0] + b[0] , a[1] + b[1] , a[2] + b[2] };
-		return c;
+        checkSize(a);
+        checkSize(b);
+
+        return new double[]{ a[0] + b[0] , a[1] + b[1] , a[2] + b[2] };
 	}
 	
 	public static double[] subtractPoints(double[] a, double[] b) {
+	    checkSize(a);
+	    checkSize(b);
+
 		double[] c = { a[0] - b[0] , a[1] - b[1] , a[2] - b[2] };
 		return c;
 	}
+
+    private static void checkSize(double[] vec) {
+        if(vec == null || vec.length != 3) {
+            throw new IllegalArgumentException("vector should have 3 values to prevent ArrayIndexOutOfBoundsException");
+        }
+    }
 
 }

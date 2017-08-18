@@ -23,7 +23,9 @@ dependencies {
 //    compile fileTree(dir: 'libs', include: '*.jar')
     compile files("src/main/lib/swt-4.6.3-${os}.jar")
 
-    compile 'gov.nist.math:jama:1.0.3'
+    compile project(':blas')
+
+    compile 'gov.nist.math:jama:1.0.3' // only for Jama.Matrix
     compile 'org.apache.logging.log4j:log4j-api:2.8.2'
     compile 'org.apache.logging.log4j:log4j-core:2.8.2'
 
