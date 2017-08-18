@@ -25,32 +25,33 @@ public class RayTracer {
 
     private static final Logger LOG = LogManager.getLogger(RayTracer.class);
 
-    public final double EPSILON = 0.00000001F;
-    public final int MAX_REFLECTION_RECURSION_DEPTH = 8;
+    private static final double EPSILON = 0.00000001F;
+    private static final int MAX_REFLECTION_RECURSION_DEPTH = 8;
 
-    public static String workingDirectory;
+    private static String workingDirectory;
 
-    public String cmdLineParams[];
+    private String cmdLineParams[];
 
-    Scene scene;
+    private org.eclipse.swt.graphics.Rectangle m_rect;
+    private ImageData m_imgdat;
+    private Text m_sceneText;
 
-    /**
-     * @param args
-     */
-    public static Display display;
-    public static Shell shell;
+    private Scene scene;
+
+    private static Display display;
+    private static Shell shell;
 
     // These are some of the camera's properties for easy (fast) access
-    double[] eye;
-    double[] lookAt;
-    double[] upDirection;
-    double[] rightDirection;
-    double[] viewplaneUp;
-    double[] direction;
-    double screenDist;
-    double pixelWidth;
-    double pixelHeight;
-    int superSampleWidth;
+    private double[] eye;
+    private double[] lookAt;
+    private double[] upDirection;
+    private double[] rightDirection;
+    private double[] viewplaneUp;
+    private double[] direction;
+    private double screenDist;
+    private double pixelWidth;
+    private double pixelHeight;
+    private int superSampleWidth;
 
 
     public static void main(String[] args) {
@@ -65,7 +66,7 @@ public class RayTracer {
         display.dispose();
     }
 
-    public void autoRender(Canvas canvas) {
+    private void autoRender(Canvas canvas) {
         String img;
 
         if (cmdLineParams.length == 0)
@@ -104,15 +105,19 @@ public class RayTracer {
     }
 
     // Finds an intersecting primitive. Will ignore the one specificed by ignorePrimitive
-    public Intersection findIntersection(Ray ray, Primitive ignorePrimitive) {
+    private Intersection findIntersection(final Ray ray, final Primitive ignorePrimitive) {
+        if(ray == null) {
+            throw new IllegalArgumentException("Ray should not be null");
+        }
+
         // Start off with infinite distance and no intersecting primitive
         double minDistance = Double.POSITIVE_INFINITY;
         Primitive minPrimitive = null;
 
-        for (Primitive primitive : scene.getPrimitives()) {
+        for (final Primitive primitive : scene.getPrimitives()) {
             // lazy method call: intersect will be called according to the
             // implementing type of the primitive
-            double t = primitive.intersect(ray);
+            final double t = primitive.intersect(ray);
 
             // If we found a closer intersecting primitive, keep a reference to and it
             if (t < minDistance && t > EPSILON && primitive != ignorePrimitive) {
@@ -125,7 +130,7 @@ public class RayTracer {
         return new Intersection(minDistance, minPrimitive);
     }
 
-    public double[] getColor(Ray ray, Intersection intersection, int recursionDepth) throws Exception {
+    private double[] getColor(Ray ray, Intersection intersection, int recursionDepth) throws Exception {
         // Avoid infinite loops and help performance by limiting the recursion depth
         if (recursionDepth > MAX_REFLECTION_RECURSION_DEPTH)
             return new double[]{0, 0, 0};
@@ -229,26 +234,25 @@ public class RayTracer {
         return color;
     }
 
-    void renderTo(ImageData dat, Canvas canvas) throws Exception {
+    private void renderTo(ImageData dat, Canvas canvas) throws Exception {
         final Parser parser = new Parser();
 
         try {
-            parser.parse(new StringReader(m_sceneText.getText()));
-        } catch (Exception e) {
-            MessageBox msgBox = new MessageBox(shell);
+            scene = parser.parse(new StringReader(m_sceneText.getText()));
+        } catch (final Exception e) {
+            LOG.error("Parser encountered an error", e);
+            final MessageBox msgBox = new MessageBox(shell);
             msgBox.setText("Error");
-            msgBox.setMessage("Parsing exception occured");
-            e.printStackTrace();
+            msgBox.setMessage("Parsing exception occurred");
             msgBox.open();
             return;
         }
 
-        scene = parser.getScene();
         scene.setCanvasSize(dat.height, dat.width);
         scene.postInit(null);
 
-        // Copy some usefull properties of the camera and scene
-        Camera camera = scene.getCamera();
+        // Copy some useful properties of the camera and scene
+        final Camera camera = scene.getCamera();
         eye = camera.getEye();
         lookAt = camera.getLookAt();
         screenDist = camera.getScreenDist();
@@ -260,7 +264,7 @@ public class RayTracer {
         viewplaneUp = camera.getViewplaneUp();
         direction = camera.getDirection();
 
-        GC gc = new GC(canvas);
+        final GC gc = new GC(canvas);
         gc.fillRectangle(m_rect);
 
         for (int y = 0; y < dat.height; ++y) {
@@ -311,7 +315,7 @@ public class RayTracer {
         }
     }
 
-    public static String readTextFile(Reader in) throws IOException {
+    private static String readTextFile(Reader in) throws IOException {
         StringBuilder sb = new StringBuilder(1024);
         BufferedReader reader = new BufferedReader(in);
 
@@ -323,27 +327,20 @@ public class RayTracer {
         return sb.toString();
     }
 
-    void openFile(String filename) {
+    private void openFile(String filename) {
         try {
             workingDirectory = new File(filename).getParent() + File.separator;
             final Reader fr = new FileReader(filename);
             m_sceneText.setText(readTextFile(fr));
         } catch (final FileNotFoundException e) {
             LOG.error("file not found", e);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (final IOException e) {
+            LOG.error(e);
         }
     }
 
 
-    org.eclipse.swt.graphics.Rectangle m_rect;
-    ImageData m_imgdat;
-
-    // GUI
-    Text m_sceneText;
-
-
-    void runMain(final Display display) {
+    private void runMain(final Display display) {
         Shell editShell = new Shell(display);
         editShell.setText("Input");
         editShell.setSize(300, 550);

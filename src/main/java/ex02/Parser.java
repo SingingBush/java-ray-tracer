@@ -4,18 +4,22 @@ import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
 
-//import org.eclipse.swt.graphics.Device;
-
 import ex02.entities.EntityFactory;
 import ex02.entities.IEntity;
 import ex02.entities.Scene;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public class Parser {
+/**
+ * Used to parse the scenes
+ */
+class Parser {
 
-    IEntity curEntity;
-    List<IEntity> entities = new ArrayList<>();
-    Scene scene;
-    //static Device device;
+    private static final Logger LOG = LogManager.getLogger(Parser.class);
+
+    private IEntity curEntity;
+    private List<IEntity> entities = new ArrayList<>();
+    private Scene scene;
 
 //    public static class ParseException extends Exception {
 //        static final long serialVersionUID = 1;
@@ -29,8 +33,14 @@ public class Parser {
 //        Parser.device = device;
 //    }
 
-    public final void parse(Reader in) throws IOException, Exception {
-        BufferedReader r = new BufferedReader(in);
+    /**
+     *
+     * @param in an implementation of Reader such as StringReader or FileReader
+     * @throws IOException
+     * @throws Exception
+     */
+    final Scene parse(final Reader in) throws IOException, Exception {
+        final BufferedReader r = new BufferedReader(in);
         String line, curobj = null;
         int lineNum = 0;
         startFile();
@@ -65,42 +75,50 @@ public class Parser {
                     reportError(String.format("Did not recognize parameter: %s of object %s (line %d)", name, curobj, lineNum));
             }
         }
-        if (curobj != null)
+
+        if (curobj != null) {
             commit();
+        }
 
         endFile();
+
+        return this.scene;
     }
 
     ///////////////////// override these methods in your implementation //////////////////
 
-    public void startFile() {
-        //System.out.println("----------------");
+    private void startFile() {
+        LOG.info("------ Parser started ---------");
     }
 
-    public void endFile() throws Exception {
+    private void endFile() throws Exception {
         if (scene != null) {
             scene.setEntities(entities);
         } else {
             throw new Exception("Scene object not found.");
         }
 
-        //System.out.println("================");
+        LOG.info("------ Parser completed -------");
     }
 
     // start a new object definition
     // return true if recognized
-    public boolean addObject(String name) throws Exception {
+    private boolean addObject(String name) throws Exception {
         curEntity = EntityFactory.createEntity(name);
-        if (curEntity == null) throw new Exception("Unknown entity encountered: " + name);
+        if (curEntity == null) {
+            throw new Exception("Unknown entity encountered: " + name);
+        }
 
-        if (name.equals("scene")) scene = (Scene) curEntity;
-        //System.out.println("OBJECT: " + name);
+        if (name.equals("scene")) {
+            scene = (Scene) curEntity;
+        }
+        LOG.debug("OBJECT: " + name);
         return true;
     }
 
     // set a specific parameter for the current object
     // return true if recognized
-    public boolean setParameter(String name, String[] args) {
+    private boolean setParameter(String name, String[] args) {
         try {
             curEntity.setParameter(name, args);
             //System.out.print("PARAM: " + name);
@@ -117,17 +135,13 @@ public class Parser {
     // finish the parsing of the current object
     // here is the place to perform any validations over the parameters and
     // final initializations.
-    public void commit() throws Exception {
+    private void commit() throws Exception {
         entities.add(curEntity);
         curEntity.postInit(entities);
     }
 
-    public void reportError(String err) {
+    private void reportError(String err) {
         System.out.println("ERROR: " + err);
-    }
-
-    public Scene getScene() {
-        return scene;
     }
 
 }
