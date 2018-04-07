@@ -7,3 +7,9 @@ jdk:
 dist: trusty
 
 group: edge
+
+# for some reason chainsaw is screwing with the build order
+script:
+  - ./gradlew :blas:build
+  - ./gradlew :entities:build
+  - ./gradlew check
