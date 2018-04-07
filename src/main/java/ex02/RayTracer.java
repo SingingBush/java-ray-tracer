@@ -436,7 +436,7 @@ public class RayTracer {
         canvas.addListener(SWT.Resize, e -> {
             m_rect = canvas.getClientArea();
 
-            autoRender(canvas);
+            //autoRender(canvas); // temp commented out for now
         });
 
         canvas.addPaintListener(e -> {

@@ -3,9 +3,10 @@ package ex02.parser;
 import ex02.entities.Scene;
 import org.junit.Test;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
 
@@ -37,9 +38,11 @@ public class ParserTest {
         fail("Shouldn't make it this far if exception thrown");
     }
 
-    private Reader loadTestResource(final String resource) {
+    private Reader loadTestResource(final String resource) throws IOException {
         final InputStream stream = ClassLoader.getSystemResourceAsStream(resource);
-        //final InputStream stream = this.getClass().getClassLoader().getResourceAsStream(resource);
-        return new InputStreamReader(stream);
+
+        return stream != null ?
+                new BufferedReader(new InputStreamReader(stream, Charset.forName("UTF-8"))) :
+                Files.newBufferedReader(Paths.get("src/test/resources/" + resource));
     }
 }
