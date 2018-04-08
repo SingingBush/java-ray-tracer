@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,10 @@ public class SceneParser implements Parser<Scene> {
 
     public SceneParser(final Reader reader) {
         _reader = reader;
+    }
+
+    public SceneParser(final String sceneData) {
+        _reader = new StringReader(sceneData);
     }
 
     @Override

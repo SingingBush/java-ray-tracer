@@ -1,16 +1,5 @@
 package ex02;
 
-import java.io.*;
-import java.util.Arrays;
-
-import ex02.parser.ParserException;
-import ex02.parser.SceneParser;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-
 import ex02.blas.MathUtils;
 import ex02.entities.Camera;
 import ex02.entities.Intersection;
@@ -25,23 +14,14 @@ import org.apache.logging.log4j.Logger;
 
 public class RayTracer {
 
-    private static final Logger LOG = LogManager.getLogger(RayTracer.class);
+    private static final Logger log = LogManager.getLogger(RayTracer.class);
 
     private static final double EPSILON = 0.00000001F;
     private static final int MAX_REFLECTION_RECURSION_DEPTH = 8;
 
-    private static String workingDirectory;
-
-    private String cmdLineParams[];
-
-    private org.eclipse.swt.graphics.Rectangle m_rect;
-    private ImageData m_imgdat;
-    private Text m_sceneText;
-
-    private Scene scene;
-
-    private static Display display;
-    private static Shell shell;
+    private final Scene scene;
+    private final int width;
+    private final int height;
 
     // These are some of the camera's properties for easy (fast) access
     private double[] eye;
@@ -55,40 +35,10 @@ public class RayTracer {
     private double pixelHeight;
     private int superSampleWidth;
 
-
-    public static void main(String[] args) {
-        LOG.debug("Ray Tracer started with args: {}", Arrays.toString(args));
-
-        display = new Display();
-        shell = new Shell(display);
-        RayTracer tracer = new RayTracer();
-        tracer.cmdLineParams = args.clone();
-        tracer.runMain(display);
-
-        display.dispose();
-    }
-
-    private void autoRender(Canvas canvas) {
-        String img;
-
-        if (cmdLineParams.length == 0)
-            return; // nothing to do
-        else
-            img = cmdLineParams[0].toLowerCase();
-
-        try {
-            openFile(img);
-            m_imgdat = new ImageData(m_rect.width, m_rect.height, 24, new PaletteData(0xFF0000, 0xFF00, 0xFF));
-            renderTo(m_imgdat, canvas);
-            ImageLoader loader = new ImageLoader();
-            loader.data = new ImageData[]{m_imgdat};
-            loader.save(img.replace(".txt", "_new.png"), SWT.IMAGE_PNG);
-            System.exit(0);
-
-        } catch (Exception ex) {
-            System.out.println("Error Rendering scene: " + ex.getMessage());
-            ex.printStackTrace();
-        }
+    public RayTracer(final int width, final int height, final Scene scene) {
+        this.width = width;
+        this.height = height;
+        this.scene = scene;
     }
 
     private Ray constructRayThroughPixel(int x, int y, double sampleXOffset, double sampleYOffset) throws Exception {
@@ -106,7 +56,7 @@ public class RayTracer {
         return ray;
     }
 
-    // Finds an intersecting primitive. Will ignore the one specificed by ignorePrimitive
+    // Finds an intersecting primitive. Will ignore the one specified by ignorePrimitive
     private Intersection findIntersection(final Ray ray, final Primitive ignorePrimitive) {
         if(ray == null) {
             throw new IllegalArgumentException("Ray should not be null");
@@ -134,15 +84,17 @@ public class RayTracer {
 
     private double[] getColor(Ray ray, Intersection intersection, int recursionDepth) throws Exception {
         // Avoid infinite loops and help performance by limiting the recursion depth
-        if (recursionDepth > MAX_REFLECTION_RECURSION_DEPTH)
+        if (recursionDepth > MAX_REFLECTION_RECURSION_DEPTH) {
             return new double[]{0, 0, 0};
+        }
 
-        Primitive primitive = intersection.getPrimitive();
+        final Primitive primitive = intersection.getPrimitive();
 
-        if (primitive == null)
+        if (primitive == null) {
             return scene.getBackgroundColor();
+        }
 
-        Surface surface = primitive.getSurface();
+        final Surface surface = primitive.getSurface();
         double[] color = new double[3];
         double[] specular = surface.getSpecular();
 
@@ -153,7 +105,7 @@ public class RayTracer {
 
         double[] diffuse = primitive.getColorAt(pointOfIntersection);
         if (diffuse == null) {
-            System.err.print("NUL");
+            log.warn("NULL diffuse color");
         }
 
         // Stretch the ray to the point of intersection - 1 to we can get a viewing vector
@@ -182,7 +134,7 @@ public class RayTracer {
 
                 // The amount of light visible on the surface, determined by the angle to the light source
                 double visibleDiffuseLight = MathUtils.dotProduct(vectorToLight, normal);
-                if (visibleDiffuseLight > 0) {
+                if (visibleDiffuseLight > 0 && diffuse != null) {
 
                     // Diffuse
                     color[0] += diffuse[0] * amountOfLightAtIntersection[0] * visibleDiffuseLight;
@@ -236,22 +188,16 @@ public class RayTracer {
         return color;
     }
 
-    // todo: break renderer out into another class and have RenderException
-    private void renderTo(ImageData dat, Canvas canvas) throws Exception {
-        final SceneParser parser = new SceneParser(new StringReader(m_sceneText.getText()));
+    /**
+     * Creates the pixel data that can be used to draw an image to a GUI or file
+     * todo: use a custom exception such as RenderException
+     * @return A 3 dimensional array which can also be thought of as a 2 dimensional array of RGB values.
+     * @throws Exception in various parts of the render process.
+     */
+    double[][][] render() throws Exception {
+        final long start = System.nanoTime();
 
-        try {
-            scene = parser.parse();
-        } catch (final ParserException e) {
-            LOG.error("Parser encountered an error", e);
-            final MessageBox msgBox = new MessageBox(shell);
-            msgBox.setText("Error");
-            msgBox.setMessage("Parsing exception occurred");
-            msgBox.open();
-            return;
-        }
-
-        scene.setCanvasSize(dat.height, dat.width);
+        scene.setCanvasSize(height, width);
         scene.postInit(null);
 
         // Copy some useful properties of the camera and scene
@@ -267,11 +213,10 @@ public class RayTracer {
         viewplaneUp = camera.getViewplaneUp();
         direction = camera.getDirection();
 
-        final GC gc = new GC(canvas);
-        gc.fillRectangle(m_rect);
+        double[][][] pixels = new double[width][height][3];
 
-        for (int y = 0; y < dat.height; ++y) {
-            for (int x = 0; x < dat.width; ++x) {
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
                 int hits = 0;
                 double[] color = new double[3];
 
@@ -305,163 +250,14 @@ public class RayTracer {
                     MathUtils.multiplyVectorByScalar(color, 1F / hits);
                 }
 
-                // Plot the pixel
-                Color cc = Utils.floatArrayToColor(color);
-
-                dat.setPixel(x, y, Utils.floatArrayToColorInt(color));
-
-                gc.setForeground(cc);
-                gc.drawPoint(x, y);
-                m_imgdat.setPixel(x, y, m_imgdat.palette.getPixel(cc.getRGB()));
-                cc.dispose(); // Only dispose if we're not using the scene background
+                pixels[x][y][0] = color[0];
+                pixels[x][y][1] = color[1];
+                pixels[x][y][2] = color[2];
             }
         }
-    }
-
-    private static String readTextFile(Reader in) throws IOException {
-        StringBuilder sb = new StringBuilder(1024);
-        BufferedReader reader = new BufferedReader(in);
-
-        char[] chars = new char[1024];
-        int numRead;
-        while ((numRead = reader.read(chars)) > -1) {
-            sb.append(String.valueOf(chars, 0, numRead));
-        }
-        return sb.toString();
-    }
-
-    private void openFile(String filename) {
-        try {
-            workingDirectory = new File(filename).getParent() + File.separator;
-            final Reader fr = new FileReader(filename);
-            m_sceneText.setText(readTextFile(fr));
-        } catch (final FileNotFoundException e) {
-            LOG.error("file not found", e);
-        } catch (final IOException e) {
-            LOG.error(e);
-        }
-    }
-
-
-    private void runMain(final Display display) {
-        Shell editShell = new Shell(display);
-        editShell.setText("Input");
-        editShell.setSize(600, 600);
-        editShell.setLayout(new GridLayout());
-
-        Composite editComp = new Composite(editShell, SWT.NONE);
-        GridData ld = new GridData();
-        ld.heightHint = 30;
-        editComp.setLayoutData(ld);
-
-        m_sceneText = new Text(editShell, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
-        ld = new GridData(GridData.FILL_BOTH);
-        m_sceneText.setLayoutData(ld);
-        m_sceneText.setFont(new Font(display, "Courier New", 11, 0));
-
-
-        final Shell previewWindow = new Shell(display);
-        previewWindow.setText("Ray Tracer Ex");
-        previewWindow.setSize(1024, 720);
-        previewWindow.setLayout(new GridLayout());
-
-        // the canvas we'll be drawing on.
-        final Canvas canvas = new Canvas(previewWindow, SWT.BORDER | SWT.NO_REDRAW_RESIZE);
-        ld = new GridData(GridData.FILL_BOTH);
-        canvas.setLayoutData(ld);
-
-        final Composite comp = new Composite(previewWindow, SWT.NONE);
-        ld = new GridData();
-        ld.heightHint = 45;
-        comp.setLayoutData(ld);
-
-        // "Render Button"
-        final Button renderBot = new Button(comp, SWT.PUSH);
-        renderBot.setText("Render");
-        renderBot.setSize(150, 40);
-
-
-        renderBot.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent ev) {
-                try {
-                    m_imgdat = new ImageData(m_rect.width, m_rect.height, 24, new PaletteData(0xFF0000, 0xFF00, 0xFF));
-                    renderTo(m_imgdat, canvas);
-                } catch (final Exception e) {
-                    LOG.error("Error Rendering scene: " + e.getMessage(), e);
-                }
-            }
-        });
-
-        final Button savePngBot = new Button(comp, SWT.PUSH);
-        savePngBot.setText("Save PNG");
-        //savePngBot.setSize(150, 40);
-        savePngBot.setBounds(250, 0, 70, 40);
-
-        savePngBot.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent ev) {
-                FileDialog dlg = new FileDialog(previewWindow, SWT.SAVE);
-                dlg.setText("Save PNG");
-                dlg.setFilterExtensions(new String[]{"*.png", "*.*"});
-                String selected = dlg.open();
-                if (selected == null)
-                    return;
-
-                final ImageLoader loader = new ImageLoader();
-                loader.data = new ImageData[]{m_imgdat};
-                loader.save(selected, SWT.IMAGE_PNG);
-            }
-        });
-
-
-        final Button openBot = new Button(editComp, SWT.PUSH);
-        openBot.setText("Open");
-        openBot.setBounds(0, 0, 100, 30);
-
-        openBot.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                FileDialog dlg = new FileDialog(previewWindow, SWT.OPEN);
-                dlg.setText("Open Model");
-                dlg.setFilterExtensions(new String[]{"*.txt", "*.*"});
-                String selected = dlg.open();
-                if (selected != null)
-                    openFile(selected);
-
-            }
-        });
-
-
-        canvas.addListener(SWT.Resize, e -> {
-            m_rect = canvas.getClientArea();
-
-            autoRender(canvas);
-        });
-
-        canvas.addPaintListener(e -> {
-            GC gc = e.gc;
-            if (m_imgdat == null) {
-                gc.drawLine(0, 0, e.width, e.height);
-                return;
-            }
-            Image img = new Image(display, m_imgdat);
-            if (img != null) {
-                gc.drawImage(img, 0, 0);
-            }
-            img.dispose();
-        });
-
-        previewWindow.open();
-        final Point l = previewWindow.getLocation();
-        editShell.setLocation(new Point(l.x + 650, l.y));
-        editShell.open();
-
-        while (!previewWindow.isDisposed()) {
-            if (!display.readAndDispatch()) display.sleep();
-        }
-
-
+        final long time = System.nanoTime() - start;
+        log.debug("Render took {} milliseconds", time / 1000_000);
+        return pixels;
     }
 
 }

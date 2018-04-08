@@ -49,7 +49,7 @@ public class Scene implements IEntity {
     }
 
     // Accepts a list of entities and puts each one in its list or member
-    public void setEntities(List<IEntity> entities) throws Exception {
+    public void setEntities(final List<IEntity> entities) throws Exception {
         for (IEntity entity : entities) {
 
             // Test to see if it's a primitive
@@ -108,16 +108,8 @@ public class Scene implements IEntity {
         return ambientLight;
     }
 
-    public void setAmbientLight(double[] ambientLight) {
-        this.ambientLight = ambientLight;
-    }
-
     public int getSuperSampleWidth() {
         return superSampleWidth;
-    }
-
-    public void setSuperSampleWidth(int superSampleWidth) {
-        this.superSampleWidth = superSampleWidth;
     }
 
     /**
@@ -142,31 +134,15 @@ public class Scene implements IEntity {
         return lights;
     }
 
-    public void setLights(List<Light> lights) {
-        this.lights = lights;
-    }
-
     public Camera getCamera() {
         return camera;
-    }
-
-    public void setCamera(Camera camera) {
-        this.camera = camera;
     }
 
     public int getCanvasHeight() {
         return canvasHeight;
     }
 
-    public void setCanvasHeight(int height) {
-        this.canvasHeight = height;
-    }
-
     public int getCanvasWidth() {
         return canvasWidth;
-    }
-
-    public void setCanvasWidth(int width) {
-        this.canvasWidth = width;
     }
 }
