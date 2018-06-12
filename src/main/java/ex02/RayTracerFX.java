@@ -1,17 +1,13 @@
 package ex02;
 
-import ex02.parser.ParserException;
-import ex02.parser.SceneParser;
+import ex02.raytracer.RayTracer;
+import ex02.raytracer.parser.ParserException;
+import ex02.raytracer.parser.SceneParser;
 import javafx.application.Application;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -22,7 +18,6 @@ import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

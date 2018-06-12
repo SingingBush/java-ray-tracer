@@ -1,4 +1,4 @@
-package ex02.parser;
+package ex02.raytracer.parser;
 
 
 /**

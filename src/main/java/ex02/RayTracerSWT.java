@@ -1,8 +1,9 @@
 package ex02;
 
 import ex02.entities.Scene;
-import ex02.parser.ParserException;
-import ex02.parser.SceneParser;
+import ex02.raytracer.RayTracer;
+import ex02.raytracer.parser.ParserException;
+import ex02.raytracer.parser.SceneParser;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.eclipse.swt.SWT;

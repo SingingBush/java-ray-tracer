@@ -1,4 +1,4 @@
-package ex02;
+package ex02.raytracer;
 
 import ex02.blas.MathUtils;
 import ex02.entities.Camera;
@@ -194,7 +194,7 @@ public class RayTracer {
      * @return A 3 dimensional array which can also be thought of as a 2 dimensional array of RGB values.
      * @throws Exception in various parts of the render process.
      */
-    double[][][] render() throws Exception {
+    public double[][][] render() throws Exception {
         final long start = System.nanoTime();
 
         scene.setCanvasSize(height, width);

@@ -1,4 +1,4 @@
-package ex02.parser;
+package ex02.raytracer.parser;
 
 import ex02.entities.EntityFactory;
 import ex02.entities.IEntity;

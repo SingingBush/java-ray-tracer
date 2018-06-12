@@ -1,5 +1,6 @@
 package ex02;
 
+import ex02.raytracer.RayTracer;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -20,7 +21,7 @@ public class BatchRender {
 
         for (final File file : files) {
             LOG.info("Rendering: " + file.getAbsolutePath());
-            Process proc = Runtime.getRuntime().exec("javaw.exe -classpath C:\\work\\ex02\\bin;C:\\work\\ex02\\lib\\swt.jar ex02.RayTracer " + file.getAbsolutePath());
+            Process proc = Runtime.getRuntime().exec("javaw.exe -classpath C:\\work\\ex02\\bin;C:\\work\\ex02\\lib\\swt.jar ex02.raytracer.RayTracer " + file.getAbsolutePath());
             proc.waitFor();
         }
     }
