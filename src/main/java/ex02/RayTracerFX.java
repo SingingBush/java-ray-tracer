@@ -99,7 +99,7 @@ public class RayTracerFX extends Application {
 
     private void displayImage() {
         try {
-            final RayTracer rayTracer = new RayTracer(1024, 720, this.scene);
+            final RayTracer rayTracer = RayTracer.create(1024, 720, this.scene);
             final double[][][] pixels = rayTracer.render();
             
             // put pixels into WritableImage

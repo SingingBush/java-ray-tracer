@@ -35,10 +35,14 @@ public class RayTracer {
     private double pixelHeight;
     private int superSampleWidth;
 
-    public RayTracer(final int width, final int height, final Scene scene) {
+    private RayTracer(final int width, final int height, final Scene scene) {
         this.width = width;
         this.height = height;
         this.scene = scene;
+    }
+
+    public static RayTracer create(final int width, final int height, final Scene scene) {
+        return new RayTracer(width, height, scene);
     }
 
     private Ray constructRayThroughPixel(int x, int y, double sampleXOffset, double sampleYOffset) throws Exception {
