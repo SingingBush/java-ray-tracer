@@ -3,8 +3,8 @@ package ex02.parser;
 import ex02.entities.EntityFactory;
 import ex02.entities.IEntity;
 import ex02.entities.Scene;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class SceneParser implements Parser<Scene> {
 
-    private static final Logger LOG = LogManager.getLogger(SceneParser.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SceneParser.class);
 
     private final Reader _reader;
 
@@ -135,7 +135,7 @@ public class SceneParser implements Parser<Scene> {
             //System.out.println();
             return true;
         } catch (final Exception e) {
-            LOG.error(e);
+            LOG.error(e.getMessage(), e);
             return false;
         }
     }

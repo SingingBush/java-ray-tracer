@@ -9,12 +9,12 @@ import ex02.entities.Surface;
 import ex02.entities.lights.Light;
 import ex02.entities.primitives.Primitive;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 public class RayTracer {
 
-    private static final Logger log = LogManager.getLogger(RayTracer.class);
+    private static final Logger log = LoggerFactory.getLogger(RayTracer.class);
 
     private static final double EPSILON = 0.00000001F;
     private static final int MAX_REFLECTION_RECURSION_DEPTH = 8;

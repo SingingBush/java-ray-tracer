@@ -3,8 +3,8 @@ package ex02;
 import ex02.entities.Scene;
 import ex02.parser.ParserException;
 import ex02.parser.SceneParser;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -25,7 +25,7 @@ import java.util.Arrays;
  */
 public class RayTracerSWT {
 
-    private static final Logger log = LogManager.getLogger(RayTracerSWT.class);
+    private static final Logger log = LoggerFactory.getLogger(RayTracerSWT.class);
 
     private static Display display;
     private static Shell shell;
@@ -245,7 +245,7 @@ public class RayTracerSWT {
         } catch (final InvalidPathException e) {
             log.error("file not found", e);
         } catch (final IOException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
         }
     }
 

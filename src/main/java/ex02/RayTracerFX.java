@@ -19,8 +19,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -33,7 +33,7 @@ import java.nio.file.Files;
  */
 public class RayTracerFX extends Application {
 
-    private static final Logger log = LogManager.getLogger(RayTracerFX.class);
+    private static final Logger log = LoggerFactory.getLogger(RayTracerFX.class);
 
     private ex02.entities.Scene scene;
     private ImageView imageView;
@@ -122,7 +122,7 @@ public class RayTracerFX extends Application {
             }
             this.imageView.setImage(imageData);
         } catch (final Exception e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
         }
     }
 
