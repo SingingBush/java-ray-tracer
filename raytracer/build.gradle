@@ -13,8 +13,7 @@ repositories {
 dependencies {
     compile project(':entities')
 
-    compileOnly 'org.slf4j:slf4j-api:1.8.0-beta2'
-    compileOnly 'org.apache.logging.log4j:log4j-slf4j-impl:2.11.0'
+    compile 'org.slf4j:slf4j-api:1.8.0-beta2'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
