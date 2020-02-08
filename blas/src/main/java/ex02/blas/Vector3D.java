@@ -12,9 +12,10 @@ public class Vector3D {
 	private double magnitude;
 	
 	// Constructor
-	public Vector3D(double[] position, double[] direction, double magnitude) throws Exception {
-		if (position.length != 3 || direction.length != 3)
-			throw new Exception ("position and direction vectors must be of length 3.");
+	public Vector3D(double[] position, double[] direction, double magnitude) throws IllegalArgumentException {
+		if (position.length != 3 || direction.length != 3) {
+			throw new IllegalArgumentException ("position and direction vectors must be of length 3.");
+		}
 		
 		this.position = position.clone();
 		this.direction = direction.clone();
