@@ -111,7 +111,7 @@ public class SceneParser implements Parser<Scene> {
 
     // start a new object definition
     // return true if recognized
-    private boolean addObject(String name) throws ParserException {
+    private boolean addObject(final String name) throws ParserException {
         _curEntity = EntityFactory.createEntity(name);
         if (_curEntity == null) {
             throw new ParserException("Unknown entity encountered: " + name);
@@ -126,13 +126,10 @@ public class SceneParser implements Parser<Scene> {
 
     // set a specific parameter for the current object
     // return true if recognized
-    private boolean setParameter(String name, String[] args) {
+    private boolean setParameter(final String name, final String[] args) {
         try {
             _curEntity.setParameter(name, args);
-            //System.out.print("PARAM: " + name);
-            //for (String s : args)
-            //    System.out.print(", " + s);
-            //System.out.println();
+            LOG.debug("\t{} = {}", name, args);
             return true;
         } catch (final Exception e) {
             LOG.error(e.getMessage(), e);
