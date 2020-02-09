@@ -7,9 +7,12 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,16 +25,41 @@ public class SceneParser implements Parser<Scene> {
     private static final Logger LOG = LoggerFactory.getLogger(SceneParser.class);
 
     private final Reader _reader;
+    private final String _filePath; // dir path to location of the scene file being loaded
 
     private IEntity _curEntity;
     private List<IEntity> _entities = new ArrayList<>();
     private Scene _scene;
 
+    public SceneParser(final File file) throws IOException {
+        if(file != null && file.canRead()) {
+            _filePath = file.getParent();
+            _reader = Files.newBufferedReader(file.toPath());
+        } else {
+            _filePath = null;
+            _reader = null;
+        }
+    }
+
+    @Deprecated
     public SceneParser(final Reader reader) {
+        _reader = reader;
+        _filePath = null;
+    }
+
+    public SceneParser(final String scenePath, final Reader reader) {
+        _filePath = scenePath;
         _reader = reader;
     }
 
+    @Deprecated
     public SceneParser(final String sceneData) {
+        _reader = new StringReader(sceneData);
+        _filePath = null;
+    }
+
+    public SceneParser(final String scenePath, final String sceneData) {
+        _filePath = scenePath;
         _reader = new StringReader(sceneData);
     }
 
@@ -128,7 +156,11 @@ public class SceneParser implements Parser<Scene> {
     // return true if recognized
     private boolean setParameter(final String name, final String[] args) {
         try {
-            _curEntity.setParameter(name, args);
+            if("texture".equalsIgnoreCase(name)) {
+                _curEntity.setParameter(name, new String[]{ Paths.get(_filePath, args).toString() });
+            } else {
+                _curEntity.setParameter(name, args);
+            }
             LOG.debug("\t{} = {}", name, args);
             return true;
         } catch (final Exception e) {
