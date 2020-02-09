@@ -23,7 +23,7 @@ public class Torus extends Primitive {
     private double alpha, beta, gamma;
 
     @Override
-    public double[] getNormal(double[] point) throws Exception {
+    public double[] getNormal(double[] point) {
         double[] normal = {0, 0, 0};
 
         double innerComponent = MathUtils.sqr(point[0]) +

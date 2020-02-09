@@ -1,6 +1,5 @@
 package ex02.entities.lights;
 
-import ex02.blas.MathUtils;
 import ex02.entities.IEntity;
 
 public abstract class Light implements IEntity {	
@@ -9,8 +8,8 @@ public abstract class Light implements IEntity {
 	private double[] color = {1, 1, 1};
 	
 	public abstract double[] getAmountOfLight(double[] point);
-	
-	public abstract double[] getVectorToLight(double[] pointOfIntersection) throws Exception;
+
+	public abstract double[] getVectorToLight(double[] pointOfIntersection);
 	
 	public double[] getPosition() {
 		return position;

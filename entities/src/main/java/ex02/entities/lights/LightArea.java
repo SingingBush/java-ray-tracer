@@ -64,7 +64,7 @@ public class LightArea extends Light {
 	}
 
 	@Override
-	public double[] getVectorToLight(double[] pointOfIntersection) throws Exception {
+	public double[] getVectorToLight(double[] pointOfIntersection) {
 		return null;
 	}
 	

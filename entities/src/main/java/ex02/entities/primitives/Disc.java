@@ -90,7 +90,7 @@ public class Disc extends Primitive {
     }
 
     @Override
-    public double[] getNormal(double[] point) throws Exception {
+    public double[] getNormal(double[] point) {
         return normal;
     }
 

@@ -9,7 +9,7 @@ import java.util.Arrays;
  */
 public class Ray extends Vector3D {
 
-    public Ray(double[] position, double[] direction, double magnitude) throws Exception {
+    public Ray(double[] position, double[] direction, double magnitude) throws IllegalArgumentException {
         super(position, direction, magnitude);
     }
 
