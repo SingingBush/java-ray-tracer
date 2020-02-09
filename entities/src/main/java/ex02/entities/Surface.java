@@ -2,6 +2,12 @@ package ex02.entities;
 
 import ex02.blas.MathUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class Surface {
@@ -22,16 +28,33 @@ public class Surface {
     private double[] checkersDiffuse2 = {0.1F, 0.1F, 0.1F};
     private double reflectance = 0.0F;
     private String textureFileName;
-    private int textureWidth;
-    private int textureHeight;
-    private double[][][] texture;
+    private Raster texture;
 
     // Returns the texture color for a given 2D point in [0, 1] coordinates
     public double[] getTextureColor(double[] point2D) {
-        int textureX = Math.abs((int) Math.round(point2D[0] * textureWidth)) % textureWidth;
-        int textureY = Math.abs((int) Math.round(point2D[1] * textureHeight)) % textureHeight;
+        if(texture == null) {
+            // fallback to using the diffuse colour if texture missing
+            return getDiffuse();
+        }
 
-        return texture[textureY][textureX];
+        final int textureWidth = texture.getWidth();
+        final int textureHeight = texture.getHeight();
+
+        int textureX = textureWidth > 0 ?
+                Math.abs((int) Math.round(point2D[0] * textureWidth)) % textureWidth :
+                Math.abs((int) Math.round(point2D[0] * 0));
+
+        int textureY = textureHeight > 0 ?
+                Math.abs((int) Math.round(point2D[1] * textureHeight)) % textureHeight :
+                Math.abs((int) Math.round(point2D[1] * 0));
+
+        final double[] rgb = this.texture.getPixel(textureX, textureY, new double[]{0, 0, 0});
+
+        rgb[0] = rgb[0] / 255.0f;
+        rgb[1] = rgb[1] / 255.0f;
+        rgb[2] = rgb[2] / 255.0f;
+
+        return rgb;
     }
 
     // Returns the checkers color for a given 2D point in [0, 1] coordinates
@@ -44,7 +67,7 @@ public class Surface {
         if (checkersX == 1 && checkersY == 0) return checkersDiffuse1;
         if (checkersX == 1 && checkersY == 1) return checkersDiffuse2;
 
-        return null;
+        return null; // should never happen, perhaps better to return [0,0,0]
     }
 
     public void postInit() {
@@ -96,13 +119,21 @@ public class Surface {
             checkersDiffuse2 = MathUtils.parseVector(args);
             parsed = true;
         }
-//        if ("texture".equals(name)) {
-//            textureFileName = args[0];
-//            parsed = true;
-//            texture = Utils.loadTexture(textureFileName);
-//            textureWidth = texture.length;
-//            textureHeight = texture[0].length;
-//        }
+        if ("texture".equals(name)) {
+            textureFileName = args[0];
+            parsed = true;
+
+            try {
+                final File textureFile = Paths.get(textureFileName).toFile();
+
+                if(textureFile.canRead()) {
+                    final BufferedImage image = ImageIO.read(textureFile);
+                    this.texture = image.getData();
+                }
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+        }
         if ("reflectance".equals(name)) {
             reflectance = Double.parseDouble(args[0]);
             parsed = true;
@@ -183,14 +214,6 @@ public class Surface {
         this.checkersDiffuse2 = checkersDiffuse2;
     }
 
-    public double[][][] getTexture() {
-        return texture;
-    }
-
-    public void setTexture(double[][][] texture) {
-        this.texture = texture;
-    }
-
     public double getReflectance() {
         return reflectance;
     }
@@ -222,9 +245,7 @@ public class Surface {
         sb.append(", checkersDiffuse2=").append(Arrays.toString(checkersDiffuse2));
         sb.append(", reflectance=").append(reflectance);
         sb.append(", textureFileName='").append(textureFileName).append('\'');
-        sb.append(", textureWidth=").append(textureWidth);
-        sb.append(", textureHeight=").append(textureHeight);
-        sb.append(", texture=").append(Arrays.toString(texture));
+        //sb.append(", texture=").append(texture);
         sb.append('}');
         return sb.toString();
     }
