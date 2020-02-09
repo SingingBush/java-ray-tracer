@@ -1,11 +1,20 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
-apply plugin: 'application'
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+javafx {
+    version = "11"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
 
 sourceCompatibility = 1.8
 version = '1.0'
 
-mainClassName = "ex02.RayTracerSWT"
+mainClassName = "ex02.RayTracerFX"
+//mainClassName = "ex02.RayTracerSWT"
 
 if (Os.isFamily(Os.FAMILY_MAC)) {
     applicationDefaultJvmArgs = ["-XstartOnFirstThread"] // required on OSX
@@ -23,6 +32,10 @@ println "Need to build with native swt lib for ${os}-${arch}"
 dependencies {
 //    compile fileTree(dir: 'libs', include: '*.jar')
     compile files("src/main/lib/swt-4.6.3-${os}.jar")
+
+//    compile 'org.openjfx:javafx-base:11'
+//    compile 'org.openjfx:javafx-controls:11'
+    //compile 'org.openjfx:javafx-fxml:11'
 
     compile 'org.jetbrains:annotations:18.0.0'
     compile project(':raytracer')
