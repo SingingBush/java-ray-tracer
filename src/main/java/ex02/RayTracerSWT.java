@@ -4,6 +4,7 @@ import ex02.entities.Scene;
 import ex02.raytracer.RayTracer;
 import ex02.raytracer.parser.ParserException;
 import ex02.raytracer.parser.SceneParser;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.eclipse.swt.SWT;
@@ -17,6 +18,7 @@ import org.eclipse.swt.widgets.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
@@ -185,15 +187,16 @@ public class RayTracerSWT {
 
     }
 
-    //@Nullable
-    private Scene openSceneFile(final String sceneText) {
-        final SceneParser parser = new SceneParser(sceneText);
-
+    @Nullable
+    private Scene openSceneFile(final File sceneFile) {
         try {
+            final SceneParser parser = new SceneParser(sceneFile);
             return parser.parse();
         } catch (final ParserException e) {
             log.error("Parser encountered an error", e);
             displayErrorMessageBox("Parsing exception occurred");
+        } catch (IOException e) {
+            log.error("Unable to open scene file", e);
         }
         return null;
     }
@@ -240,9 +243,15 @@ public class RayTracerSWT {
 
     private void openFile(final String filePath) {
         try {
-            final String txt = new String(Files.readAllBytes(Paths.get(filePath)));
-            m_sceneText.setText(txt);
-            currentScene = openSceneFile(txt);
+            final Path path = Paths.get(filePath);
+            final File file = path.toFile();
+
+            if(file.exists() && file.canRead()) {
+                m_sceneText.setText(new String(Files.readAllBytes(path)));
+                currentScene = openSceneFile(file);
+            } else {
+                log.error("cannot read path: {}", filePath);
+            }
         } catch (final InvalidPathException e) {
             log.error("file not found", e);
         } catch (final IOException e) {
