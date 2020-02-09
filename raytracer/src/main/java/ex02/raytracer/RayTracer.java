@@ -9,6 +9,8 @@ import ex02.entities.Surface;
 import ex02.entities.lights.Light;
 import ex02.entities.primitives.Primitive;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -45,12 +47,12 @@ public class RayTracer {
         return new RayTracer(width, height, scene);
     }
 
-    private Ray constructRayThroughPixel(int x, int y, double sampleXOffset, double sampleYOffset) throws Exception {
-        Ray ray = new Ray(eye, direction, screenDist);
-        double[] endPoint = ray.getEndPoint();
+    private Ray constructRayThroughPixel(final int x, final int y, final double sampleXOffset, final double sampleYOffset) {
+        final Ray ray = new Ray(eye, direction, screenDist);
+        final double[] endPoint = ray.getEndPoint();
 
-        double upOffset = -1 * (y - (scene.getCanvasHeight() / 2) - (sampleYOffset / superSampleWidth)) * pixelHeight;
-        double rightOffset = (x - (scene.getCanvasWidth() / 2) + (sampleXOffset / superSampleWidth)) * pixelWidth;
+        final double upOffset = -1 * (y - (scene.getCanvasHeight() / 2.0) - (sampleYOffset / superSampleWidth)) * pixelHeight;
+        final double rightOffset = (x - (scene.getCanvasWidth() / 2.0) + (sampleXOffset / superSampleWidth)) * pixelWidth;
 
         MathUtils.addVectorAndMultiply(endPoint, viewplaneUp, upOffset);
         MathUtils.addVectorAndMultiply(endPoint, rightDirection, rightOffset);
@@ -61,7 +63,7 @@ public class RayTracer {
     }
 
     // Finds an intersecting primitive. Will ignore the one specified by ignorePrimitive
-    private Intersection findIntersection(final Ray ray, final Primitive ignorePrimitive) {
+    private Intersection findIntersection(@NotNull final Ray ray, @Nullable final Primitive ignorePrimitive) {
         if(ray == null) {
             throw new IllegalArgumentException("Ray should not be null");
         }
@@ -86,7 +88,7 @@ public class RayTracer {
         return new Intersection(minDistance, minPrimitive);
     }
 
-    private double[] getColor(Ray ray, Intersection intersection, int recursionDepth) throws Exception {
+    private double[] getColor(Ray ray, Intersection intersection, int recursionDepth) {
         // Avoid infinite loops and help performance by limiting the recursion depth
         if (recursionDepth > MAX_REFLECTION_RECURSION_DEPTH) {
             return new double[]{0, 0, 0};
@@ -119,25 +121,25 @@ public class RayTracer {
         double[] normal = primitive.getNormal(pointOfIntersection);
 
         // Shoot rays towards each light source and see if it's visible
-        for (Light light : scene.getLights()) {
-            double[] vectorToLight = light.getVectorToLight(pointOfIntersection);
+        for (final Light light : scene.getLights()) {
+            final double[] vectorToLight = light.getVectorToLight(pointOfIntersection);
 
-            Ray rayToLight = new Ray(pointOfIntersection, vectorToLight, 1);
+            final Ray rayToLight = new Ray(pointOfIntersection, vectorToLight, 1);
             rayToLight.normalize();
 
             // Light is visible if there's no intersection with an object at least epsilon away
-            double distanceToBlockingPrimitive = findIntersection(rayToLight, null).getDistance();
-            double distanceToLight = MathUtils.norm(MathUtils.calcPointsDiff(pointOfIntersection, light.getPosition()));
+            final double distanceToBlockingPrimitive = findIntersection(rayToLight, null).getDistance();
+            final double distanceToLight = MathUtils.norm(MathUtils.calcPointsDiff(pointOfIntersection, light.getPosition()));
 
-            boolean lightVisible = distanceToBlockingPrimitive <= EPSILON
+            final boolean lightVisible = distanceToBlockingPrimitive <= EPSILON
                     || distanceToBlockingPrimitive >= distanceToLight;
 
             if (lightVisible) {
                 // Measure the distance to the light and find the amount of light hitting the primitive
-                double[] amountOfLightAtIntersection = light.getAmountOfLight(pointOfIntersection);
+                final double[] amountOfLightAtIntersection = light.getAmountOfLight(pointOfIntersection);
 
                 // The amount of light visible on the surface, determined by the angle to the light source
-                double visibleDiffuseLight = MathUtils.dotProduct(vectorToLight, normal);
+                final double visibleDiffuseLight = MathUtils.dotProduct(vectorToLight, normal);
                 if (visibleDiffuseLight > 0 && diffuse != null) {
 
                     // Diffuse
@@ -180,12 +182,12 @@ public class RayTracer {
         color[2] += surfaceEmission[2];
 
         // Reflection Ray
-        double[] reflectionDirection = MathUtils.reflectVector(MathUtils.oppositeVector(ray.getDirection()), normal);
-        Ray reflectionRay = new Ray(pointOfIntersection, reflectionDirection, 1);
+        final double[] reflectionDirection = MathUtils.reflectVector(MathUtils.oppositeVector(ray.getDirection()), normal);
+        final Ray reflectionRay = new Ray(pointOfIntersection, reflectionDirection, 1);
         reflectionRay.normalize();
 
-        Intersection reflectionIntersection = findIntersection(reflectionRay, null);
-        double[] reflectionColor = getColor(reflectionRay, reflectionIntersection, recursionDepth + 1);
+        final Intersection reflectionIntersection = findIntersection(reflectionRay, null);
+        final double[] reflectionColor = getColor(reflectionRay, reflectionIntersection, recursionDepth + 1);
 
         MathUtils.addVectorAndMultiply(color, reflectionColor, surface.getReflectance());
 
@@ -221,47 +223,54 @@ public class RayTracer {
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                int hits = 0;
-                double[] color = new double[3];
-
-                // Supersampling loops
-                for (int k = 0; k < superSampleWidth; k++) {
-                    for (int l = 0; l < superSampleWidth; l++) {
-                        double[] sampleColor = null;
-
-                        // Create the ray
-                        Ray ray = constructRayThroughPixel(x, y, k, l);
-
-                        // Find the intersecting primitive
-                        Intersection intersection = findIntersection(ray, null);
-
-                        // If we hit something, get its color
-                        if (intersection.getPrimitive() != null) {
-                            hits++;
-                            sampleColor = getColor(ray, intersection, 1);
-                            MathUtils.addVector(color, sampleColor);
-
-                            ray.setMagnitude(intersection.getDistance());
-                        }
-                    }
-                }
-
-                // If we didn't anything in any of the samples, use the background color
-                if (hits == 0) {
-                    color = scene.getBackgroundAt(x, y);
-                } else {
-                    // Average the cumulative color values
-                    MathUtils.multiplyVectorByScalar(color, 1F / hits);
-                }
-
-                pixels[x][y][0] = color[0];
-                pixels[x][y][1] = color[1];
-                pixels[x][y][2] = color[2];
+                pixels[x][y] = calculatePixelColor(x, y);
             }
         }
+
         final long time = System.nanoTime() - start;
         log.debug("Render took {} milliseconds", time / 1000_000);
         return pixels;
+    }
+
+    private double[] calculatePixelColor(final int x, final int y) {
+        int hits = 0;
+        double[] color = new double[3];
+
+        // Supersampling loops
+        for (int k = 0; k < superSampleWidth; k++) {
+            for (int l = 0; l < superSampleWidth; l++) {
+                double[] sampleColor = null;
+
+                // Create the ray
+                final Ray ray = constructRayThroughPixel(x, y, k, l);
+
+                // Find the intersecting primitive
+                final Intersection intersection = findIntersection(ray, null);
+
+                // If we hit something, get its color
+                if (intersection.getPrimitive() != null) {
+                    hits++;
+                    sampleColor = getColor(ray, intersection, 1);
+                    MathUtils.addVector(color, sampleColor);
+
+                    ray.setMagnitude(intersection.getDistance());
+                }
+            }
+        }
+
+        // If we didn't anything in any of the samples, use the background color
+        if (hits == 0) {
+            color = scene.getBackgroundAt(x, y);
+        } else {
+            // Average the cumulative color values
+            MathUtils.multiplyVectorByScalar(color, 1F / hits);
+        }
+
+        return new double[] {
+            Math.min(color[0], 1.0d),
+            Math.min(color[1], 1.0d),
+            Math.min(color[2], 1.0d)
+        };
     }
 
 }
