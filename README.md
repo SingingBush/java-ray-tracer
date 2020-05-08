@@ -1,6 +1,7 @@
 Simple Java Ray Tracer
 ======================
 
+![Java CI](https://github.com/SingingBush/java-ray-tracer/workflows/Java%20CI/badge.svg?branch=master)
 [![Build Status](https://travis-ci.org/SingingBush/java-ray-tracer.svg?branch=master)](https://travis-ci.org/SingingBush/java-ray-tracer)
 
 This repository was initialised with some Java code I came across back in 2012. It was a blog post by [Barak Cohen](https://plus.google.com/109999908224705846661/posts) titled 'Ray Tracing: A Simple Java, Open Source Implementation'. It was posted back in 2008 and provided an attached Eclipse project written by Barak Cohen and Gur Dotan.
