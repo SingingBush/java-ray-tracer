@@ -6,11 +6,11 @@ plugins {
 }
 
 javafx {
-    version = "11"
+    version = JavaVersion.current().getMajorVersion()
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 version = '1.0'
 
 mainClassName = "ex02.RayTracerFX"

@@ -11,7 +11,7 @@ The original authors chose to use SWT ([The Standard Widget Toolkit](https://www
 
 Some work has been done toward creating a replacement UI using JavaFX.
 
-To build and run the project simply run the Gradle wrapper in the projects root directory:
+To build and run the project you'll need Java 11 or newer. Simply run the Gradle wrapper in the projects root directory:
 
 ```
 ./gradlew run
