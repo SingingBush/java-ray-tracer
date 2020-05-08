@@ -13,5 +13,5 @@ dependencies {
 
     compile 'gov.nist.math:jama:1.0.3' // only for Jama.Matrix
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile 'org.junit.vintage:junit-vintage-engine:5.6.2'
 }
