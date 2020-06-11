@@ -5,11 +5,15 @@ import ex02.raytracer.parser.ParserException;
 import ex02.raytracer.parser.SceneParser;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -18,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
+import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 
@@ -76,11 +81,27 @@ public class RayTracerFX extends Application {
                     }
                 });
 
+        final FileChooser saveFileChooser = new FileChooser();
+        saveFileChooser.setTitle("Save png File");
+        saveFileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("png files (*.png)", "*.png")
+        );
+
+        final Button saveButton = new Button("Save Image");
+        saveButton.setOnAction(
+                actionEvent -> {
+                    final File file = saveFileChooser.showSaveDialog(primaryStage);
+                    saveImage(file);
+                });
+
         this.canvas = new Canvas(WIDTH, HEIGHT);
 
         initCanvas();
 
-        final VBox box = new VBox(8.0, canvas, openButton);
+        final HBox buttons = new HBox(12.0, openButton, saveButton);
+        buttons.setPadding(new Insets(8, 12, 8, 12));
+
+        final VBox box = new VBox(8.0, canvas, buttons);
 
         primaryStage.setScene(new Scene(box));
         primaryStage.show();
@@ -113,9 +134,23 @@ public class RayTracerFX extends Application {
         }
     }
 
-//    private void saveImage() {
-//        ImageIO.write(SwingFXUtils.fromFXImage(pic.getImage(),null), "png", file); todo
-//    }
+    private void saveImage(final File file) {
+        if(file != null) {
+            try {
+                final WritableImage writableImage = new WritableImage(
+                        (int) canvas.getWidth(),
+                        (int) canvas.getHeight()
+                );
+
+                canvas.snapshot(null, writableImage);
+
+                ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), "png", file);
+                log.debug("Saved image as {}", file.getAbsolutePath());
+            } catch (final IOException e) {
+                log.error("problem saving png file", e);
+            }
+        }
+    }
 
     private void setPixelsOnImage(@NotNull final double[][][] pixels, @NotNull final PixelWriter pixelWriter) {
         for (int x = 0; x < pixels.length; x++) {

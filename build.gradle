@@ -7,7 +7,7 @@ plugins {
 
 javafx {
     version = JavaVersion.current().getMajorVersion()
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing' ]
 }
 
 sourceCompatibility = 11
