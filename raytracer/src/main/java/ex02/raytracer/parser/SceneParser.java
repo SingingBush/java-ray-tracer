@@ -26,6 +26,7 @@ public class SceneParser implements Parser<Scene> {
 
     private final Reader _reader;
     private final String _filePath; // dir path to location of the scene file being loaded
+    private final String _fileName; // the file name will be used as the name of the scene
 
     private IEntity _curEntity;
     private List<IEntity> _entities = new ArrayList<>();
@@ -34,9 +35,11 @@ public class SceneParser implements Parser<Scene> {
     public SceneParser(final File file) throws IOException {
         if(file != null && file.canRead()) {
             _filePath = file.getParent();
+            _fileName = file.getName();
             _reader = Files.newBufferedReader(file.toPath());
         } else {
             _filePath = null;
+            _fileName = null;
             _reader = null;
         }
     }
@@ -45,10 +48,12 @@ public class SceneParser implements Parser<Scene> {
     public SceneParser(final Reader reader) {
         _reader = reader;
         _filePath = null;
+        _fileName = null;
     }
 
     public SceneParser(final String scenePath, final Reader reader) {
         _filePath = scenePath;
+        _fileName = null;
         _reader = reader;
     }
 
@@ -56,10 +61,12 @@ public class SceneParser implements Parser<Scene> {
     public SceneParser(final String sceneData) {
         _reader = new StringReader(sceneData);
         _filePath = null;
+        _fileName = null;
     }
 
     public SceneParser(final String scenePath, final String sceneData) {
         _filePath = scenePath;
+        _fileName = null;
         _reader = new StringReader(sceneData);
     }
 
@@ -130,6 +137,7 @@ public class SceneParser implements Parser<Scene> {
                 LOG.error("There was a problem setting entities on scene", e);
                 throw new ParserException(e.getMessage(), e);
             }
+            _scene.setName(_fileName != null ? _fileName : "Unknown Scene");
         } else {
             throw new ParserException("Scene object not found.");
         }

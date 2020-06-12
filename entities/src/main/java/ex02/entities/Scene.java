@@ -16,6 +16,7 @@ import ex02.entities.primitives.Primitive;
  */
 public class Scene implements IEntity {
 
+    private String name;
     private List<Primitive> primitives = new ArrayList<>();
     private List<Light> lights = new ArrayList<>();
     private Camera camera;
@@ -30,6 +31,14 @@ public class Scene implements IEntity {
 
     int canvasWidth;
     int canvasHeight;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @Override
     public void postInit(List<IEntity> entities) throws Exception {
