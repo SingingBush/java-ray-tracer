@@ -8,7 +8,6 @@ import ex02.entities.IEntity;
 public class LightPoint extends Light {
 
     private double[] attenuation = {1, 0, 0};
-    private double[] color = {1, 1, 1};
 	
 	public LightPoint() {
 	}
@@ -16,15 +15,15 @@ public class LightPoint extends Light {
 	// This constructor is called by LightArea
 	public LightPoint(double[] pos, double[] attenuation, double[] color) {
 		this.setPosition(pos);
+		this.setColor(color);
 		this.attenuation = attenuation;
-		this.color = color;
 	}
 
 	@Override
 	public void setParameter(String name, String[] args) throws Exception {
 		if ("pos".equals(name)) setPosition(MathUtils.parseVector(args));
 		if ("attenuation".equals(name)) attenuation = MathUtils.parseVector(args);
-		if ("color".equals(name)) color = MathUtils.parseVector(args);
+		if ("color".equals(name)) setColor(MathUtils.parseVector(args));
 	}
 
 	@Override
@@ -32,10 +31,10 @@ public class LightPoint extends Light {
 		double d = MathUtils.norm(MathUtils.calcPointsDiff(getPosition(), point));
 		
 		double totalAttenuation = 1 / (attenuation[2] * d * d + attenuation[1] * d + attenuation[0]);
-		
-		double[] result = { color[0] * totalAttenuation, color[1] * totalAttenuation, color[2] * totalAttenuation };
-		
-		return result;
+
+		final double[] color = this.getColor();
+
+		return new double[]{ color[0] * totalAttenuation, color[1] * totalAttenuation, color[2] * totalAttenuation };
 	}
 
 	@Override

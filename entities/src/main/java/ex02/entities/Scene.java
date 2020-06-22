@@ -1,6 +1,5 @@
 package ex02.entities;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +16,8 @@ import ex02.entities.primitives.Primitive;
 public class Scene implements IEntity {
 
     private String name;
-    private List<Primitive> primitives = new ArrayList<>();
-    private List<Light> lights = new ArrayList<>();
+    private final List<Primitive> primitives = new ArrayList<>();
+    private final List<Light> lights = new ArrayList<>();
     private Camera camera;
 
     private double[] backgroundColor = {0, 0, 0};
@@ -101,10 +100,6 @@ public class Scene implements IEntity {
         return primitives;
     }
 
-    public void setPrimitives(List<Primitive> listOfPrimitives) {
-        this.primitives = listOfPrimitives;
-    }
-
     public double[] getBackgroundColor() {
         return backgroundColor;
     }
@@ -113,8 +108,20 @@ public class Scene implements IEntity {
         this.backgroundColor = backgroundColor;
     }
 
+    public void setBackgroundColor(double red, double green, double blue) {
+        this.backgroundColor = new double[] {red, green, blue};
+    }
+
     public double[] getAmbientLight() {
         return ambientLight;
+    }
+
+    public void setAmbientLight(double[] ambientLight) {
+        this.ambientLight = ambientLight;
+    }
+
+    public void setAmbientLight(double red, double green, double blue) {
+        this.ambientLight = new double[] {red, green, blue};
     }
 
     public int getSuperSampleWidth() {

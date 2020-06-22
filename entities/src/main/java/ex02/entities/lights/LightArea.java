@@ -11,7 +11,6 @@ public class LightArea extends Light {
 
 	private double[] p0, p1, p2;
     private double[] attenuation = {1, 0, 0};
-    private double[] color = {1, 1, 1};
     private int gridWidth = 1;
 
 	@Override
@@ -21,7 +20,7 @@ public class LightArea extends Light {
 		if ("p2".equals(name)) p2 = MathUtils.parseVector(args);
 		if ("grid-width".equals(name)) gridWidth = Integer.parseInt(args[0]);		
 		if ("attenuation".equals(name)) attenuation = MathUtils.parseVector(args);
-		if ("color".equals(name)) color = MathUtils.parseVector(args);
+		if ("color".equals(name)) setColor(MathUtils.parseVector(args));
 	}
 	
 	// This method will be never called (see class notes).
@@ -48,8 +47,7 @@ public class LightArea extends Light {
 								p0[1] + i * p1Offset[1] + j * p2Offset[1],
 								p0[2] + i * p1Offset[2] + j * p2Offset[2] };
 								
-				LightPoint lightPoint = new LightPoint(pos, effectiveAttenuation, color);
-				entities.add(lightPoint);								
+				entities.add(new LightPoint(pos, effectiveAttenuation, getColor()));
 			}
 		}
 				

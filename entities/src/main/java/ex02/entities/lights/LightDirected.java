@@ -7,7 +7,6 @@ import ex02.entities.IEntity;
 
 public class LightDirected extends Light {
 
-	private double[] position;
 	private double[] direction;
 	private double[] oppositeDirection;
 	
@@ -34,15 +33,10 @@ public class LightDirected extends Light {
 	public double[] getAmountOfLight(double[] point) {					
 		return super.getColor(); // constant light, regardless of distance to target
 	}
-	
-	@Override	
-	public double[] getPosition() {		 		
-		return position;
-	}
 
 	@Override
 	public void postInit(List<IEntity> entities) throws Exception {
-		position = new double[] { Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY };		
+		super.setPosition(new double[] { Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY });
 	}
 
 	@Override

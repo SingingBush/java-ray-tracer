@@ -13,17 +13,21 @@ public abstract class Light implements IEntity {
 	
 	public double[] getPosition() {
 		return position;
-	}	
-	
-	void setPosition(double[] position) {
+	}
+
+	public void setPosition(double[] position) {
 		this.position = position;
-	} 		
-	
-	double[] getColor() {
+	}
+
+	public double[] getColor() {
 		return color;
 	}
 	
 	public void setColor(double[] color) {
 		this.color = color;
+	}
+
+	public void setColor(double red, double green, double blue) {
+		this.color = new double[] {red, green, blue};
 	}
 }
