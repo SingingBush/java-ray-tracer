@@ -1,5 +1,6 @@
 package ex02;
 
+import ex02.components.SceneEditor;
 import ex02.raytracer.RayTracer;
 import ex02.raytracer.parser.ParserException;
 import ex02.raytracer.parser.SceneParser;
@@ -10,14 +11,13 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import javafx.stage.*;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -39,6 +39,8 @@ public class RayTracerFX extends Application {
 
     private ex02.entities.Scene scene;
     private Canvas canvas;
+    private SceneEditor sceneEditor;
+    private Button openSceneEditorButton;
 
     public static void main(String[] args) {
         launch(args);
@@ -54,6 +56,12 @@ public class RayTracerFX extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Java Ray Tracer");
 
+        this.sceneEditor = new SceneEditor(primaryStage, this::updateScene);
+
+        this.openSceneEditorButton = new Button("Scene Editor");
+        this.openSceneEditorButton.setDisable(this.scene == null);
+        this.openSceneEditorButton.setOnAction(e -> sceneEditor.show());
+
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Scene File");
         //fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
@@ -63,7 +71,6 @@ public class RayTracerFX extends Application {
                 new FileChooser.ExtensionFilter("Plain Text", "*.txt")
         );
 
-
         final Button openButton = new Button("Open a Scene...");
         openButton.setOnAction(
                 actionEvent -> {
@@ -72,9 +79,7 @@ public class RayTracerFX extends Application {
                         log.debug("Selected a Scene file");
                         try {
                             final SceneParser parser = new SceneParser(file);
-                            this.scene = parser.parse();
-
-                            Platform.runLater(this::displayImage); //new Thread(this::displayImage).start();
+                            this.updateScene(parser.parse());
                         } catch (final IOException | ParserException e) {
                             log.error(e.getMessage(), e);
                         }
@@ -98,13 +103,21 @@ public class RayTracerFX extends Application {
 
         initCanvas();
 
-        final HBox buttons = new HBox(12.0, openButton, saveButton);
+        final HBox buttons = new HBox(12.0, openButton, openSceneEditorButton, saveButton);
         buttons.setPadding(new Insets(8, 12, 8, 12));
 
         final VBox box = new VBox(8.0, canvas, buttons);
 
         primaryStage.setScene(new Scene(box));
         primaryStage.show();
+    }
+
+    private void updateScene(final ex02.entities.Scene scene) {
+        log.debug("Scene set to {}", scene != null ? scene.getName() : "null");
+        this.scene = scene;
+        this.sceneEditor.onSceneLoaded(this.scene);
+        openSceneEditorButton.setDisable(this.scene == null);
+        Platform.runLater(this::renderScene); //new Thread(this::renderScene).start();
     }
 
     private void initCanvas() {
@@ -119,9 +132,7 @@ public class RayTracerFX extends Application {
         log.info("stopping...");
     }
 
-    private void displayImage() {
-        initCanvas();
-
+    private void renderScene() {
         final RayTracer rayTracer = RayTracer.create(WIDTH, HEIGHT, this.scene);
 
         try {
