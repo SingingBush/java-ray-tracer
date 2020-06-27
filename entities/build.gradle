@@ -9,9 +9,9 @@ repositories {
 }
 
 dependencies {
-    compile project(':blas')
+    implementation project(':blas')
 
-    compile 'gov.nist.math:jama:1.0.3' // only for Jama.Matrix
+    implementation 'gov.nist.math:jama:1.0.3' // only for Jama.Matrix
 
-    testCompile 'org.junit.vintage:junit-vintage-engine:5.6.2'
+    testImplementation 'org.junit.vintage:junit-vintage-engine:5.6.2'
 }
