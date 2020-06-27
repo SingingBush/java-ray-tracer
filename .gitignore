@@ -13,3 +13,6 @@ target/
 build/
 out/
 
+# Don't commit log files
+*.log
+
