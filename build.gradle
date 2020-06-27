@@ -20,6 +20,12 @@ if (Os.isFamily(Os.FAMILY_MAC)) {
     applicationDefaultJvmArgs = ["-XstartOnFirstThread"] // required on OSX
 }
 
+if (Os.isFamily(Os.FAMILY_UNIX)) {
+    // JavaFX won't work properly with Wayland yet, even if you set GTK to version 2 with '-Djdk.gtk.version=2'
+    // This can be worked around by setting an environment variable: GDK_BACKEND=x11
+    run.environment('GDK_BACKEND', 'x11')
+}
+
 repositories {
     mavenCentral()
 }
