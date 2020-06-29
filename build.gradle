@@ -1,8 +1,45 @@
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+allprojects {
+    apply plugin: 'java'
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    group = 'ex02'
+    version = '1.0'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    dependencies {
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.6.2'
+    }
+
+    test {
+        useJUnitPlatform {
+            // excludeTags 'ignore'
+            includeEngines 'junit-jupiter'
+            excludeEngines 'junit-vintage'
+        }
+        testLogging {
+            events TestLogEvent.PASSED, TestLogEvent.FAILED, TestLogEvent.SKIPPED
+            showCauses true
+        }
+    }
 }
 
 javafx {
@@ -10,8 +47,6 @@ javafx {
     modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing' ]
 }
 
-sourceCompatibility = 11
-version = '1.0'
 
 mainClassName = "ex02.RayTracerFX"
 //mainClassName = "ex02.RayTracerSWT"
@@ -24,10 +59,6 @@ if (Os.isFamily(Os.FAMILY_UNIX)) {
     // JavaFX won't work properly with Wayland yet, even if you set GTK to version 2 with '-Djdk.gtk.version=2'
     // This can be worked around by setting an environment variable: GDK_BACKEND=x11
     run.environment('GDK_BACKEND', 'x11')
-}
-
-repositories {
-    mavenCentral()
 }
 
 String os = System.getProperty('os.name').toLowerCase().split()[0]
@@ -50,6 +81,4 @@ dependencies {
     implementation project(':raytracer')
 
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.13.2'
-
-    testImplementation 'org.junit.vintage:junit-vintage-engine:5.6.2'
 }

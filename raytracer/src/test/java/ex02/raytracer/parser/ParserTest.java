@@ -1,37 +1,37 @@
 package ex02.raytracer.parser;
 
 import ex02.entities.Scene;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Samael Bate (singingbush)
  * created on 18/08/17
  */
-public class ParserTest {
+class ParserTest {
 
     @Test
-    public void testParseSpheresSceneFile() throws Exception {
+    void testParseSpheresSceneFile() throws ParserException {
         Parser parser = new SceneParser(loadTestResource("scenes/spheres.txt"));
 
         final Object result = parser.parse();
 
-        assertTrue("parser should've returned a scene", Scene.class.isAssignableFrom(result.getClass()));
+        assertTrue(Scene.class.isAssignableFrom(result.getClass()), "parser should've returned a scene");
 
         final Scene scene = Scene.class.cast(result);
 
         assertNotNull(scene.getCamera());
-        assertEquals("There should be x2 lights in the scene", 2, scene.getLights().size());
-        assertEquals("There should be x3 primitives in the scene", 3, scene.getPrimitives().size());
+        assertEquals(2, scene.getLights().size(), "There should be x2 lights in the scene");
+        assertEquals(3, scene.getPrimitives().size(), "There should be x3 primitives in the scene");
     }
 
 /*    @Test(expected = ParserException.class)
-    public void testParserThrowsExceptionForNullReader() throws Exception {
+    void testParserThrowsExceptionForNullReader() throws Exception {
         Parser parser = new SceneParser(null);
         parser.parse();
         fail("Shouldn't make it this far if exception thrown");
