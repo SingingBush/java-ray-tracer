@@ -102,8 +102,8 @@ public class RayTracerSWT {
                 if(currentScene != null) {
                     try {
                         m_imgdat = new ImageData(m_rect.width, m_rect.height, 24, new PaletteData(0xFF0000, 0xFF00, 0xFF));
-                        final RayTracer rayTracer = RayTracer.create(m_rect.width, m_rect.height, currentScene);
-                        final double[][][] pixels = rayTracer.render();
+                        final RayTracer rayTracer = RayTracer.create(currentScene);
+                        final double[][][] pixels = rayTracer.render(m_rect.width, m_rect.height);
                         setPixelsOnImage(pixels);
                         canvas.redraw();
 
@@ -219,8 +219,8 @@ public class RayTracerSWT {
         try {
             openFile(img);
             m_imgdat = new ImageData(m_rect.width, m_rect.height, 24, new PaletteData(0xFF0000, 0xFF00, 0xFF));
-            final RayTracer rayTracer = RayTracer.create(m_rect.width, m_rect.height, currentScene);
-            final double[][][] pixels = rayTracer.render();
+            final RayTracer rayTracer = RayTracer.create(currentScene);
+            final double[][][] pixels = rayTracer.render(m_rect.width, m_rect.height);
             setPixelsOnImage(pixels);
             canvas.redraw();
 

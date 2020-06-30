@@ -133,12 +133,12 @@ public class RayTracerFX extends Application {
     }
 
     private void renderScene() {
-        final RayTracer rayTracer = RayTracer.create(WIDTH, HEIGHT, this.scene);
+        final RayTracer rayTracer = RayTracer.create(this.scene);
 
         try {
             final GraphicsContext gc = canvas.getGraphicsContext2D();
 
-            final double[][][] pixels = rayTracer.render();
+            final double[][][] pixels = rayTracer.render(WIDTH, HEIGHT);
             setPixelsOnImage(pixels, gc.getPixelWriter());
         } catch (Exception e) {
             log.error(e.getMessage(), e);

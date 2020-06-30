@@ -22,8 +22,6 @@ public class RayTracer {
     private static final int MAX_REFLECTION_RECURSION_DEPTH = 8;
 
     private final Scene scene;
-    private final int width;
-    private final int height;
 
     // These are some of the camera's properties for easy (fast) access
     private double[] eye;
@@ -37,14 +35,12 @@ public class RayTracer {
     private double pixelHeight;
     private int superSampleWidth;
 
-    private RayTracer(final int width, final int height, final Scene scene) {
-        this.width = width;
-        this.height = height;
+    private RayTracer(final Scene scene) {
         this.scene = scene;
     }
 
-    public static RayTracer create(final int width, final int height, final Scene scene) {
-        return new RayTracer(width, height, scene);
+    public static RayTracer create(@NotNull final Scene scene) {
+        return new RayTracer(scene);
     }
 
     private Ray constructRayThroughPixel(final int x, final int y, final double sampleXOffset, final double sampleYOffset) {
@@ -197,10 +193,12 @@ public class RayTracer {
     /**
      * Creates the pixel data that can be used to draw an image to a GUI or file
      * todo: use a custom exception such as RenderException
+     * @param width the width of the image to be rendered
+     * @param height the height of the image to be rendered
      * @return A 3 dimensional array which can also be thought of as a 2 dimensional array of RGB values.
      * @throws Exception in various parts of the render process.
      */
-    public double[][][] render() throws Exception {
+    public double[][][] render(final int width, final int height) throws Exception {
         final long start = System.nanoTime();
 
         scene.setCanvasSize(height, width);
