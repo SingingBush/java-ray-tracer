@@ -11,48 +11,45 @@ import org.slf4j.LoggerFactory;
 
 public class RayTracerImpl implements RayTracer {
 
-    private static final Logger log = LoggerFactory.getLogger(RayTracer.class);
-
-//    private static final double EPSILON = 0.00000001F;
-//    private static final int MAX_REFLECTION_RECURSION_DEPTH = 8;
+    private static final Logger log = LoggerFactory.getLogger(RayTracerImpl.class);
 
     private final Scene scene;
-    private int maxRecursionDepth;
+    private final int maxRecursionDepth;
+    private final Camera camera;
 
-    // These are some of the camera's properties for easy (fast) access
-    private double[] eye;
-    private double[] lookAt;
-    private double[] upDirection;
-    private double[] rightDirection;
-    private double[] viewplaneUp;
-    private double[] direction;
-    private double screenDist;
     private double pixelWidth;
     private double pixelHeight;
-    private int superSampleWidth;
 
     RayTracerImpl(final Scene scene, int maxRecursionDepth) {
         this.scene = scene;
         this.maxRecursionDepth = maxRecursionDepth;
+
+        try {
+            scene.postInit(null);
+        } catch (final Exception e) {}
+
+        this.camera = scene.getCamera();
     }
 
-//    public static RayTracer create(@NotNull final Scene scene) {
-//        return new RayTracerImpl(scene);
-//    }
-
     private Ray constructRayThroughPixel(final int x, final int y, final double sampleXOffset, final double sampleYOffset) {
-        final Ray ray = new Ray(eye, direction, screenDist);
+        final Ray ray = camera.getRay();
         final double[] endPoint = ray.getEndPoint();
 
-        final double upOffset = -1 * (y - (scene.getCanvasHeight() / 2.0) - (sampleYOffset / superSampleWidth)) * pixelHeight;
-        final double rightOffset = (x - (scene.getCanvasWidth() / 2.0) + (sampleXOffset / superSampleWidth)) * pixelWidth;
+        final double upOffset = -1 * (y - (scene.getCanvasHeight() / 2.0) - (sampleYOffset / scene.getSuperSampleWidth())) * pixelHeight;
+        final double rightOffset = (x - (scene.getCanvasWidth() / 2.0) + (sampleXOffset / scene.getSuperSampleWidth())) * pixelWidth;
 
-        MathUtils.addVectorAndMultiply(endPoint, viewplaneUp, upOffset);
-        MathUtils.addVectorAndMultiply(endPoint, rightDirection, rightOffset);
+        MathUtils.addVectorAndMultiply(endPoint, camera.getViewplaneUp(), upOffset);
+        MathUtils.addVectorAndMultiply(endPoint, camera.getRightDirection(), rightOffset);
 
-        ray.setDirection(MathUtils.calcPointsDiff(eye, endPoint));
+        ray.setDirection(MathUtils.calcPointsDiff(camera.getEye(), endPoint));
         ray.normalize();
         return ray;
+    }
+
+    private void setRenderSize(final int width, final int height) {
+        this.scene.setCanvasSize(height, width);
+        this.pixelWidth = this.camera.getScreenWidth() / this.scene.getCanvasWidth();
+        this.pixelHeight = this.scene.getCanvasWidth() / this.scene.getCanvasHeight() * this.pixelWidth;
     }
 
     // Finds an intersecting primitive. Will ignore the one specified by ignorePrimitive
@@ -197,23 +194,9 @@ public class RayTracerImpl implements RayTracer {
      */
     @Override
     public double[][][] render(final int width, final int height) throws Exception {
+        setRenderSize(width, height);
+
         final long start = System.nanoTime();
-
-        scene.setCanvasSize(height, width);
-        scene.postInit(null);
-
-        // Copy some useful properties of the camera and scene
-        final Camera camera = scene.getCamera();
-        eye = camera.getEye();
-        lookAt = camera.getLookAt();
-        screenDist = camera.getScreenDist();
-        pixelWidth = camera.getScreenWidth() / scene.getCanvasWidth();
-        pixelHeight = scene.getCanvasWidth() / scene.getCanvasHeight() * pixelWidth;
-        upDirection = camera.getUpDirection();
-        rightDirection = camera.getRightDirection();
-        superSampleWidth = scene.getSuperSampleWidth();
-        viewplaneUp = camera.getViewplaneUp();
-        direction = camera.getDirection();
 
         double[][][] pixels = new double[width][height][3];
 
@@ -231,6 +214,8 @@ public class RayTracerImpl implements RayTracer {
     private double[] calculatePixelColor(final int x, final int y) {
         int hits = 0;
         double[] color = new double[3];
+
+        final int superSampleWidth = scene.getSuperSampleWidth();
 
         // Supersampling loops
         for (int k = 0; k < superSampleWidth; k++) {

@@ -114,4 +114,8 @@ public class Camera implements IEntity {
         this.viewplaneUp = viewplaneUp;
     }
 
+    public Ray getRay() {
+        return new Ray(this.eye, this.direction, this.screenDist);
+    }
+
 }
