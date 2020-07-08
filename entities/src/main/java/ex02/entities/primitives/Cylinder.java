@@ -154,7 +154,7 @@ public class Cylinder extends Primitive {
 
     @Override
     public void setParameter(String name, String[] args) throws Exception {
-        if (surface.parseParameter(name, args)) return;
+        if (getSurface().parseParameter(name, args)) return;
         if ("start".equals(name)) start = MathUtils.parseVector(args);
         if ("direction".equals(name)) direction = MathUtils.parseVector(args);
         if ("length".equals(name)) length = Double.parseDouble(args[0]);

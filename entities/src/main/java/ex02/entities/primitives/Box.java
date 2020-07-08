@@ -60,7 +60,7 @@ public class Box extends Primitive {
     }
 
     public void setParameter(String name, String[] args) throws Exception {
-        if (surface.parseParameter(name, args)) return;
+        if (getSurface().parseParameter(name, args)) return;
         if ("p0".equals(name)) p0 = MathUtils.parseVector(args);
         if ("p1".equals(name)) p1 = MathUtils.parseVector(args);
         if ("p2".equals(name)) p2 = MathUtils.parseVector(args);

@@ -9,7 +9,7 @@ import ex02.blas.RootFinder;
 import ex02.entities.IEntity;
 import ex02.entities.Ray;
 
-public class Torus extends Primitive {
+public class Torus extends Primitive implements Center {
 
     private double[] center;
     private double centralRadius;
@@ -171,11 +171,20 @@ public class Torus extends Primitive {
 
     @Override
     public void setParameter(String name, String[] args) throws Exception {
-        if (surface.parseParameter(name, args)) return;
+        if (getSurface().parseParameter(name, args)) return;
         if ("center".equals(name)) center = MathUtils.parseVector(args);
         if ("central-radius".equals(name)) centralRadius = Double.parseDouble(args[0]);
         if ("tube-radius".equals(name)) tubeRadius = Double.parseDouble(args[0]);
         if ("normal".equals(name)) normal = MathUtils.parseVector(args);
     }
 
+    @Override
+    public double[] getCenter() {
+        return center;
+    }
+
+    @Override
+    public void setCenter(double[] center) {
+        this.center = center;
+    }
 }

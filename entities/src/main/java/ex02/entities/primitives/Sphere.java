@@ -5,16 +5,25 @@ import ex02.blas.MathUtils;
 import ex02.entities.IEntity;
 import ex02.entities.Ray;
 
-public class Sphere extends Primitive {
+public class Sphere extends Primitive implements Center {
 
     private double[] center = new double[3];
     private double radius;
-
 
     @Override
     public double intersect(Ray ray) {
 
         return intersectGeometric(ray);
+    }
+
+    @Override
+    public double[] getCenter() {
+        return center;
+    }
+
+    @Override
+    public void setCenter(double[] center) {
+        this.center = center;
     }
 
     /**
@@ -102,7 +111,7 @@ public class Sphere extends Primitive {
     }
 
     public void setParameter(String name, String[] args) throws Exception {
-        if (surface.parseParameter(name, args)) return;
+        if (getSurface().parseParameter(name, args)) return;
         if ("center".equals(name)) center = MathUtils.parseVector(args);
         if ("radius".equals(name)) radius = Double.parseDouble(args[0]);
     }

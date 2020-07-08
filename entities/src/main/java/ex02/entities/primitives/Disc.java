@@ -5,7 +5,7 @@ import ex02.blas.MathUtils;
 import ex02.entities.IEntity;
 import ex02.entities.Ray;
 
-public class Disc extends Primitive {
+public class Disc extends Primitive implements Center {
 
     private double[] center = null;
     private double[] normal = null;
@@ -80,7 +80,7 @@ public class Disc extends Primitive {
 
     @Override
     public void setParameter(String name, String[] args) throws Exception {
-        if (surface.parseParameter(name, args)) return;
+        if (getSurface().parseParameter(name, args)) return;
         if ("center".equals(name)) center = MathUtils.parseVector(args);
         if ("normal".equals(name)) {
             normal = MathUtils.parseVector(args);
@@ -113,6 +113,15 @@ public class Disc extends Primitive {
         MathUtils.normalize(pivotVector);
     }
 
+    @Override
+    public double[] getCenter() {
+        return center;
+    }
+
+    @Override
+    public void setCenter(double[] center) {
+        this.center = center;
+    }
 
     private void initializeReferenceVector() {
 

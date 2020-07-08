@@ -11,19 +11,34 @@ import ex02.entities.Surface;
  */
 public abstract class Primitive implements IEntity {
 
-    Surface surface = new Surface();
+    private final Surface surface;
+
+    private boolean active;
+
+    public Primitive() {
+        this.surface = new Surface();
+        this.active = true;
+    }
 
     /**
      * A generic intersection algorithm which returns the distance between the ray and the
      * implementing primitive.  Returns Double.POSITIVE_INFINITY if there is no intersection.
      *
      * @param ray
-     * @return
+     * @return the distance between the ray and the implementing primitive or Double.POSITIVE_INFINITY
      */
     abstract public double intersect(Ray ray);
 
     public Surface getSurface() {
         return surface;
+    }
+
+    public boolean isActive() {
+        return this.active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public void postInit(List<IEntity> entities) {

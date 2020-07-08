@@ -2,6 +2,7 @@ package ex02.components;
 
 import ex02.entities.Scene;
 import ex02.entities.lights.Light;
+import ex02.entities.primitives.Center;
 import ex02.entities.primitives.Primitive;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -139,10 +140,21 @@ public class SceneEditor extends Stage {
 
             final List<Primitive> primitives = this.scene.getPrimitives();
             for(final Primitive primitive : primitives) {
-                // todo: finish off primitives (Sphere and Torus both have center vertex so could be moved easily)
                 gridPane.add(new Label("Primitive:"), 0, row);
                 gridPane.add(new Label(primitive.getClass().getSimpleName()), 1, row);
                 row++;
+
+                // Primitives that have a central vertex like Sphere and Torus can be moved by their center
+                if(Center.class.isAssignableFrom(primitive.getClass())) {
+                    final Center centeredPrimitive = (Center) primitive;
+                    final VertexControl centerControl = new VertexControl(centeredPrimitive.getCenter());
+                    centerControl
+                            .vertexProperty()
+                            .addListener((observable, oldValue, newValue) -> centeredPrimitive.setCenter(newValue));
+
+                    gridPane.add(centerControl, 1, row);
+                    row++;
+                }
             }
         } else {
             this.label.setText("No scene data found");
