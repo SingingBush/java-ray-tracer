@@ -4,6 +4,9 @@ import ex02.blas.MathUtils;
 import ex02.entities.*;
 import ex02.entities.lights.Light;
 import ex02.entities.primitives.Primitive;
+
+import java.util.stream.*;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -53,7 +56,7 @@ public class RayTracerImpl implements RayTracer {
     }
 
     // Finds an intersecting primitive. Will ignore the one specified by ignorePrimitive
-    private Intersection findIntersection(@NotNull final Ray ray, @Nullable final Primitive ignorePrimitive) {
+    private synchronized Intersection findIntersection(@NotNull final Ray ray, @Nullable final Primitive ignorePrimitive) {
         if(ray == null) {
             throw new IllegalArgumentException("Ray should not be null");
         }
@@ -198,16 +201,24 @@ public class RayTracerImpl implements RayTracer {
 
         final long start = System.nanoTime();
 
-        double[][][] pixels = new double[width][height][3];
+        final double[][][] pixels = new double[width][height][3];
 
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; ++x) {
+        IntStream.range(0, height)
+                .parallel() // when testing the first loop was the best to do in parallel
+                .forEach((final int y) -> {
+            IntStream.range(0, width)
+                    //.parallel() // doing both loops in parallel actually slows it down
+                    .forEach((final int x) -> {
                 pixels[x][y] = calculatePixelColor(x, y);
-            }
+            });
+        });
+
+
+        if(log.isDebugEnabled()) {
+            final long time = System.nanoTime() - start;
+            log.debug("Render took {} milliseconds", String.format("%,d", time / 1_000_000));
         }
 
-        final long time = System.nanoTime() - start;
-        log.debug("Render took {} milliseconds", time / 1000_000);
         return pixels;
     }
 
@@ -220,8 +231,6 @@ public class RayTracerImpl implements RayTracer {
         // Supersampling loops
         for (int k = 0; k < superSampleWidth; k++) {
             for (int l = 0; l < superSampleWidth; l++) {
-                double[] sampleColor = null;
-
                 // Create the ray
                 final Ray ray = constructRayThroughPixel(x, y, k, l);
 
@@ -231,7 +240,7 @@ public class RayTracerImpl implements RayTracer {
                 // If we hit something, get its color
                 if (intersection.getPrimitive() != null) {
                     hits++;
-                    sampleColor = getColor(ray, intersection, 1);
+                    final double[] sampleColor = getColor(ray, intersection, 1);
                     MathUtils.addVector(color, sampleColor);
 
                     ray.setMagnitude(intersection.getDistance());
