@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
+import java.util.concurrent.*;
+import java.util.stream.*;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
@@ -138,7 +140,10 @@ public class RayTracerFX extends Application {
         try {
             final GraphicsContext gc = canvas.getGraphicsContext2D();
 
-            final double[][][] pixels = rayTracer.render(WIDTH, HEIGHT);
+            final Future<double[][][]> renderTask = rayTracer.renderTask(WIDTH, HEIGHT);
+
+            final double[][][] pixels = renderTask.get(10, TimeUnit.SECONDS);
+
             setPixelsOnImage(pixels, gc.getPixelWriter());
         } catch (Exception e) {
             log.error(e.getMessage(), e);

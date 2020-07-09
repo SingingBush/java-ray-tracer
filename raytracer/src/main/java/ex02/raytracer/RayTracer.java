@@ -2,6 +2,7 @@ package ex02.raytracer;
 
 import ex02.entities.Scene;
 import org.jetbrains.annotations.NotNull;
+import java.util.concurrent.*;
 
 public interface RayTracer {
 
@@ -29,4 +30,5 @@ public interface RayTracer {
      */
     double[][][] render(final int width, final int height) throws Exception;
 
+    Future<double[][][]> renderTask(final int width, final int height);
 }

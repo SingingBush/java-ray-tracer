@@ -5,6 +5,7 @@ import ex02.entities.*;
 import ex02.entities.lights.Light;
 import ex02.entities.primitives.Primitive;
 
+import java.util.concurrent.*;
 import java.util.stream.*;
 
 import org.jetbrains.annotations.NotNull;
@@ -220,6 +221,20 @@ public class RayTracerImpl implements RayTracer {
         }
 
         return pixels;
+    }
+
+    @Override
+    public Future<double[][][]> renderTask(int width, int height) {
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+
+        return executor.submit(() -> {
+            try {
+                return render(width, height);
+            }
+            catch (InterruptedException e) {
+                throw new IllegalStateException("task interrupted", e);
+            }
+        });
     }
 
     private double[] calculatePixelColor(final int x, final int y) {
