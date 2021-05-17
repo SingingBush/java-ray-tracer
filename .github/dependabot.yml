@@ -5,13 +5,3 @@ updates:
   schedule:
     interval: monthly
   open-pull-requests-limit: 4
-  ignore:
-  - dependency-name: org.junit.jupiter:junit-jupiter-engine
-    versions:
-    - 5.7.1
-  - dependency-name: org.junit.platform:junit-platform-launcher
-    versions:
-    - 1.7.1
-  - dependency-name: org.junit.jupiter:junit-jupiter-api
-    versions:
-    - 5.7.1
