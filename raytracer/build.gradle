@@ -14,6 +14,6 @@ dependencies {
     implementation project(':blas')
     implementation project(':entities')
 
-    implementation 'org.jetbrains:annotations:20.1.0'
+    implementation 'org.jetbrains:annotations:21.0.1'
     implementation 'org.slf4j:slf4j-api:1.7.30'
 }
