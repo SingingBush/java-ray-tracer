@@ -24,7 +24,7 @@ allprojects {
 
 subprojects {
     dependencies {
-        def junitVersion = '5.8.1'
+        def junitVersion = '5.8.2'
         testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.8.1'
