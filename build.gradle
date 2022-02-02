@@ -69,7 +69,7 @@ println "Need to build with native swt lib for ${os}-${arch}"
 
 dependencies {
 //    implementation fileTree(dir: 'libs', include: '*.jar')
-    implementation files("src/main/lib/swt-4.6.3-${os}.jar")
+    implementation files("src/main/lib/swt-4.22-${os}.jar")
 
     // implementation 'org.openjfx:javafx-base:11'
     // implementation 'org.openjfx:javafx-controls:11'
