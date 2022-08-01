@@ -81,5 +81,5 @@ dependencies {
     implementation project(':entities')
     implementation project(':raytracer')
 
-    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.+'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.18.+'
 }
