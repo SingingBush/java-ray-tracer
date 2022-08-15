@@ -2,12 +2,11 @@ package ex02.entities.primitives;
 
 import java.util.List;
 
-import Jama.Matrix;
-
 import ex02.blas.MathUtils;
 import ex02.blas.RootFinder;
 import ex02.entities.IEntity;
 import ex02.entities.Ray;
+import org.ejml.simple.SimpleMatrix;
 
 public class Torus extends Primitive implements Center {
 
@@ -35,20 +34,21 @@ public class Torus extends Primitive implements Center {
         normal[2] = 4 * point[2] * innerComponent + (8 * centralRadiusSquare * MathUtils.sqr(point[2]));
 
         // Create the normal in matrix form
-        Matrix normalMatrix = new Matrix(4, 1);
+        final SimpleMatrix normalMatrix = new SimpleMatrix(4, 1);
         normalMatrix.set(0, 0, normal[0]);
         normalMatrix.set(1, 0, normal[1]);
         normalMatrix.set(2, 0, normal[2]);
         normalMatrix.set(3, 0, 1);
 
         // Create the translation matrix
-        Matrix M = Matrix.identity(4, 4);
+        final SimpleMatrix M = SimpleMatrix.identity(4);
+        //Matrix M = Matrix.identity(4, 4);
         M.set(0, 3, center[0]);
         M.set(1, 3, center[1]);
         M.set(2, 3, center[2]);
 
         // Translate the normal
-        Matrix Mnormal = M.times(normalMatrix);
+        final SimpleMatrix Mnormal = M.mult(normalMatrix);
 
         // Extract it from the matrix form
         double[] translatedNormal = {Mnormal.get(0, 0), Mnormal.get(1, 0), Mnormal.get(2, 0)};
@@ -93,8 +93,8 @@ public class Torus extends Primitive implements Center {
     public double intersect(Ray ray) {
 
         // Convert the ray position and direction to matrix style
-        Matrix rayPosition = new Matrix(4, 1);
-        Matrix rayDirection = new Matrix(4, 1);
+        final SimpleMatrix rayPosition = new SimpleMatrix(4, 1);
+        final SimpleMatrix rayDirection = new SimpleMatrix(4, 1);
         rayPosition.set(0, 0, ray.getPosition()[0]);
         rayPosition.set(1, 0, ray.getPosition()[1]);
         rayPosition.set(2, 0, ray.getPosition()[2]);
@@ -105,14 +105,14 @@ public class Torus extends Primitive implements Center {
         rayDirection.set(3, 0, 1);
 
         // Create the translation matrix
-        Matrix M = Matrix.identity(4, 4);
+        final SimpleMatrix M = SimpleMatrix.identity(4);
         M.set(0, 3, -center[0]);
         M.set(1, 3, -center[1]);
         M.set(2, 3, -center[2]);
 
         // Translate the position and direction vectors
-        Matrix MPosition = M.times(rayPosition);
-        Matrix MDirection = M.times(rayDirection);
+        final SimpleMatrix MPosition = M.mult(rayPosition);
+        final SimpleMatrix MDirection = M.mult(rayDirection);
 
         // Extract them from the matrix form
         double[] translatedPosition = {MPosition.get(0, 0), MPosition.get(1, 0), MPosition.get(2, 0)};

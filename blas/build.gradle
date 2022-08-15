@@ -1,6 +1,6 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_11
 version = '1.0'
 
 dependencies {

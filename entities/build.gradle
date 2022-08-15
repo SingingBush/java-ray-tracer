@@ -1,9 +1,9 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_11
 
 dependencies {
     implementation project(':blas')
 
-    implementation 'gov.nist.math:jama:1.0.3' // only for Jama.Matrix
+    implementation 'org.ejml:ejml-simple:0.41'
 }
