@@ -6,7 +6,9 @@ import ex02.blas.MathUtils;
 import ex02.blas.RootFinder;
 import ex02.entities.IEntity;
 import ex02.entities.Ray;
-import org.ejml.simple.SimpleMatrix;
+import org.apache.commons.math3.linear.BlockRealMatrix;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
 
 public class Torus extends Primitive implements Center {
 
@@ -34,24 +36,23 @@ public class Torus extends Primitive implements Center {
         normal[2] = 4 * point[2] * innerComponent + (8 * centralRadiusSquare * MathUtils.sqr(point[2]));
 
         // Create the normal in matrix form
-        final SimpleMatrix normalMatrix = new SimpleMatrix(4, 1);
-        normalMatrix.set(0, 0, normal[0]);
-        normalMatrix.set(1, 0, normal[1]);
-        normalMatrix.set(2, 0, normal[2]);
-        normalMatrix.set(3, 0, 1);
+        final RealMatrix normalMatrix = new BlockRealMatrix(4, 1);
+        normalMatrix.setEntry(0, 0, normal[0]);
+        normalMatrix.setEntry(1, 0, normal[1]);
+        normalMatrix.setEntry(2, 0, normal[2]);
+        normalMatrix.setEntry(3, 0, 1);
 
         // Create the translation matrix
-        final SimpleMatrix M = SimpleMatrix.identity(4);
-        //Matrix M = Matrix.identity(4, 4);
-        M.set(0, 3, center[0]);
-        M.set(1, 3, center[1]);
-        M.set(2, 3, center[2]);
+        final RealMatrix M = MatrixUtils.createRealIdentityMatrix(4);
+        M.setEntry(0, 3, center[0]);
+        M.setEntry(1, 3, center[1]);
+        M.setEntry(2, 3, center[2]);
 
         // Translate the normal
-        final SimpleMatrix Mnormal = M.mult(normalMatrix);
+        final RealMatrix Mnormal = M.multiply(normalMatrix);
 
         // Extract it from the matrix form
-        double[] translatedNormal = {Mnormal.get(0, 0), Mnormal.get(1, 0), Mnormal.get(2, 0)};
+        double[] translatedNormal = {Mnormal.getEntry(0, 0), Mnormal.getEntry(1, 0), Mnormal.getEntry(2, 0)};
 
         MathUtils.normalize(translatedNormal);
         return translatedNormal;
@@ -93,30 +94,30 @@ public class Torus extends Primitive implements Center {
     public double intersect(Ray ray) {
 
         // Convert the ray position and direction to matrix style
-        final SimpleMatrix rayPosition = new SimpleMatrix(4, 1);
-        final SimpleMatrix rayDirection = new SimpleMatrix(4, 1);
-        rayPosition.set(0, 0, ray.getPosition()[0]);
-        rayPosition.set(1, 0, ray.getPosition()[1]);
-        rayPosition.set(2, 0, ray.getPosition()[2]);
-        rayPosition.set(3, 0, 1);
-        rayDirection.set(0, 0, ray.getDirection()[0]);
-        rayDirection.set(1, 0, ray.getDirection()[1]);
-        rayDirection.set(2, 0, ray.getDirection()[2]);
-        rayDirection.set(3, 0, 1);
+        final RealMatrix rayPosition = new BlockRealMatrix(4, 1);
+        final RealMatrix rayDirection = new BlockRealMatrix(4, 1);
+        rayPosition.setEntry(0, 0, ray.getPosition()[0]);
+        rayPosition.setEntry(1, 0, ray.getPosition()[1]);
+        rayPosition.setEntry(2, 0, ray.getPosition()[2]);
+        rayPosition.setEntry(3, 0, 1);
+        rayDirection.setEntry(0, 0, ray.getDirection()[0]);
+        rayDirection.setEntry(1, 0, ray.getDirection()[1]);
+        rayDirection.setEntry(2, 0, ray.getDirection()[2]);
+        rayDirection.setEntry(3, 0, 1);
 
         // Create the translation matrix
-        final SimpleMatrix M = SimpleMatrix.identity(4);
-        M.set(0, 3, -center[0]);
-        M.set(1, 3, -center[1]);
-        M.set(2, 3, -center[2]);
+        final RealMatrix M = MatrixUtils.createRealIdentityMatrix(4);
+        M.setEntry(0, 3, -center[0]);
+        M.setEntry(1, 3, -center[1]);
+        M.setEntry(2, 3, -center[2]);
 
         // Translate the position and direction vectors
-        final SimpleMatrix MPosition = M.mult(rayPosition);
-        final SimpleMatrix MDirection = M.mult(rayDirection);
+        final RealMatrix MPosition = M.multiply(rayPosition);
+        final RealMatrix MDirection = M.multiply(rayDirection);
 
         // Extract them from the matrix form
-        double[] translatedPosition = {MPosition.get(0, 0), MPosition.get(1, 0), MPosition.get(2, 0)};
-        double[] translatedDirection = {MDirection.get(0, 0), MDirection.get(1, 0), MDirection.get(2, 0)};
+        double[] translatedPosition = {MPosition.getEntry(0, 0), MPosition.getEntry(1, 0), MPosition.getEntry(2, 0)};
+        double[] translatedDirection = {MDirection.getEntry(0, 0), MDirection.getEntry(1, 0), MDirection.getEntry(2, 0)};
 
         MathUtils.normalize(translatedDirection);
 

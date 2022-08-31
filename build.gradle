@@ -3,6 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'application'
+    id 'org.javamodularity.moduleplugin' version '1.8.12' apply false
     id 'org.openjfx.javafxplugin' version '0.0.13'
 }
 
@@ -23,6 +24,8 @@ allprojects {
 }
 
 subprojects {
+    apply plugin: "org.javamodularity.moduleplugin"
+
     dependencies {
         def junitVersion = '5.9.0'
         testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
