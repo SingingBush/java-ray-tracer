@@ -3,7 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'application'
-    id 'org.javamodularity.moduleplugin' version '1.8.12' apply false
+    id 'org.javamodularity.moduleplugin' version '1.8.12'
     id 'org.openjfx.javafxplugin' version '0.0.13'
 }
 
@@ -52,8 +52,11 @@ javafx {
 }
 
 
-mainClassName = "ex02.RayTracerFX"
-//mainClassName = "ex02.RayTracerSWT"
+application {
+    mainClass = "ex02.RayTracerFX"
+    //mainClass = "ex02.RayTracerSWT"
+    mainModule = moduleName
+}
 
 if (Os.isFamily(Os.FAMILY_MAC)) {
     applicationDefaultJvmArgs = ["-XstartOnFirstThread"] // required on OSX
@@ -84,5 +87,6 @@ dependencies {
     implementation project(':entities')
     implementation project(':raytracer')
 
+    implementation 'org.slf4j:slf4j-api:2.0.+'
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.19.+'
 }
