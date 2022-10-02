@@ -3,6 +3,7 @@ package ex02.raytracer.parser;
 import ex02.entities.Scene;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ParserTest {
 
     @Test
-    void testParseSpheresSceneFile() throws ParserException {
+    void testParseSpheresSceneFile() throws ParserException, IOException {
         Parser parser = new SceneParser(loadTestResource("scenes/spheres.txt"));
 
         final Object result = parser.parse();
@@ -37,8 +38,9 @@ class ParserTest {
         fail("Shouldn't make it this far if exception thrown");
     }*/
 
-    private Reader loadTestResource(final String resource) {
-        final InputStream stream = ClassLoader.getSystemResourceAsStream(resource);
+    private Reader loadTestResource(final String resource) throws IOException {
+        //final InputStream stream = ClassLoader.getSystemResourceAsStream(resource);
+        final InputStream stream = this.getClass().getModule().getResourceAsStream(resource);
         //final InputStream stream = this.getClass().getClassLoader().getResourceAsStream(resource);
         return new InputStreamReader(stream);
     }

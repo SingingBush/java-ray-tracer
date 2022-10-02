@@ -6,6 +6,7 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,8 +43,9 @@ class RayTracerTest {
         }
     }
 
-    private Reader loadTestResource(final String resource) {
-        final InputStream stream = ClassLoader.getSystemResourceAsStream(resource);
+    private Reader loadTestResource(final String resource) throws IOException {
+        //final InputStream stream = ClassLoader.getSystemResourceAsStream(resource);
+        final InputStream stream = this.getClass().getModule().getResourceAsStream(resource);
         //final InputStream stream = this.getClass().getClassLoader().getResourceAsStream(resource);
         return new InputStreamReader(stream);
     }
