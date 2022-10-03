@@ -11,5 +11,8 @@ dependencies {
     implementation project(':entities')
 
     implementation 'org.jetbrains:annotations:23.+'
-    implementation 'org.slf4j:slf4j-api:2.0.+'
+
+    def slf4jVersion = '2.0.+'
+    implementation "org.slf4j:slf4j-api:$slf4jVersion"
+    testRuntimeOnly "org.slf4j:slf4j-simple:$slf4jVersion"
 }
