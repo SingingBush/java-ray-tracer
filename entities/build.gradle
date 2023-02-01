@@ -5,5 +5,5 @@ sourceCompatibility = JavaVersion.VERSION_11
 dependencies {
     implementation project(':blas')
 
-    implementation 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'org.apache.commons:commons-math4-legacy:4.0-beta1'
 }

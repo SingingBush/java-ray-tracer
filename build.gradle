@@ -81,7 +81,7 @@ dependencies {
     // implementation 'org.openjfx:javafx-controls:11'
     // implementation 'org.openjfx:javafx-fxml:11'
 
-    implementation 'org.jetbrains:annotations:23.+'
+    implementation 'org.jetbrains:annotations:24.+'
 
     implementation project(':blas')
     implementation project(':entities')

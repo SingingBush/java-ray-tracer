@@ -2,7 +2,7 @@ module ex02.entities {
 
     requires java.desktop;
 
-    requires commons.math3;
+    requires org.apache.commons.math4.legacy;
 
     requires ex02.blas;
 

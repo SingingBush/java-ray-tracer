@@ -6,9 +6,9 @@ import ex02.blas.MathUtils;
 import ex02.blas.RootFinder;
 import ex02.entities.IEntity;
 import ex02.entities.Ray;
-import org.apache.commons.math3.linear.BlockRealMatrix;
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math4.legacy.linear.BlockRealMatrix;
+import org.apache.commons.math4.legacy.linear.MatrixUtils;
+import org.apache.commons.math4.legacy.linear.RealMatrix;
 
 public class Torus extends Primitive implements Center {
 
