@@ -10,7 +10,7 @@ dependencies {
     implementation project(':blas')
     implementation project(':entities')
 
-    implementation 'org.jetbrains:annotations:23.+'
+    implementation 'org.jetbrains:annotations:24.+'
 
     def slf4jVersion = '2.0.+'
     implementation "org.slf4j:slf4j-api:$slf4jVersion"
