@@ -27,10 +27,10 @@ subprojects {
     apply plugin: "org.javamodularity.moduleplugin"
 
     dependencies {
-        def junitVersion = '5.9.+'
+        def junitVersion = '5.10.+'
         testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-        testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.9.+'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.+'
     }
 
     test {
