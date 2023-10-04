@@ -9,15 +9,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk: ['11', '17']
+        jdk: ['11', '17', '21']
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v3
         with:
-          distribution: zulu
+          distribution: corretto
           java-version: ${{ matrix.jdk }}
           cache: 'gradle'
 
