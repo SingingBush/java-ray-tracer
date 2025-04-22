@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk: ['17', '21', '24']
+        jdk: ['17', '21', '23'] # Gradle doesn't support JDK 24 yet
 
     steps:
       - uses: actions/checkout@v4
